@@ -6,7 +6,7 @@
 
 use glam::IVec3;
 use rustc_hash::{FxHashMap, FxHashSet};
-use weft_abi::Energy;
+use loom_abi::Energy;
 
 use super::entity::Entities;
 use crate::content::Content;

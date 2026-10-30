@@ -3,7 +3,7 @@
 //! menu's groups; click handling is generic, mods only describe groups and react to changes
 //! (crafting).
 
-use weft_abi::{self as abi, ItemStack, slot_flags as sf};
+use loom_abi::{self as abi, ItemStack, slot_flags as sf};
 
 use super::dim::Dim;
 use crate::content::Content;

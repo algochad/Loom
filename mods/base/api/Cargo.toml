@@ -6,4 +6,4 @@ license.workspace = true
 
 # Types and handles of the base game other mods compile against; no code of the game itself.
 [dependencies]
-weft_sdk.workspace = true
+loom_sdk.workspace = true

@@ -4,7 +4,7 @@
 use rayon::prelude::*;
 use glam::{DVec3, IVec3};
 use rustc_hash::{FxHashMap, FxHashSet};
-use weft_abi::{ItemStack, entity_flags as ef};
+use loom_abi::{ItemStack, entity_flags as ef};
 
 use crate::content::Content;
 use crate::physics;
@@ -124,9 +124,9 @@ impl Entity {
         self.pos + DVec3::Y * (self.eye(c) - 0.3)
     }
 
-    pub fn state(&self, c: &Content, max_health: f32) -> weft_abi::EntityState {
+    pub fn state(&self, c: &Content, max_health: f32) -> loom_abi::EntityState {
         let k = &c.game.entities[self.kind as usize];
-        weft_abi::EntityState {
+        loom_abi::EntityState {
             kind: self.kind,
             flags: k.flags | if self.blocked { ef::BLOCKED } else { 0 },
             pos: self.pos.to_array(),

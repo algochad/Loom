@@ -28,7 +28,7 @@ use glam::{DVec3, IVec3};
 use parking_lot::Mutex;
 use rayon::prelude::*;
 use rustc_hash::FxHashSet;
-use weft_abi::{self as abi, ItemStack, component_flags as cf, damage};
+use loom_abi::{self as abi, ItemStack, component_flags as cf, damage};
 
 pub use dim::{Dim, DimEvent, break_time};
 
@@ -1383,7 +1383,7 @@ impl Server {
             "nearest" => found.sort_by(|a, b| a.2.total_cmp(&b.2)),
             "furthest" => found.sort_by(|a, b| b.2.total_cmp(&a.2)),
             "random" => {
-                let mut rng = weft_noise::Rng(self.tick);
+                let mut rng = loom_noise::Rng(self.tick);
                 for i in (1..found.len()).rev() {
                     found.swap(i, rng.below(i as u64 + 1) as usize);
                 }

@@ -1,12 +1,12 @@
-//! Safe Rust API for writing Weft mods. The base game uses exactly this crate.
+//! Safe Rust API for writing Loom mods. The base game uses exactly this crate.
 
-pub use weft_abi as abi;
+pub use loom_abi as abi;
 
 pub mod ai;
 mod cache;
 pub mod client;
 mod component;
-pub use weft_noise as noise;
+pub use loom_noise as noise;
 pub mod terrain;
 mod command;
 mod config;
@@ -46,7 +46,7 @@ static REGISTRAR: AtomicPtr<abi::Registrar> = AtomicPtr::new(std::ptr::null_mut(
 
 pub fn host() -> &'static Host {
     let p = HOST.load(Ordering::Relaxed);
-    assert!(!p.is_null(), "weft host used before mod init");
+    assert!(!p.is_null(), "loom host used before mod init");
     unsafe { &*p }
 }
 
@@ -95,15 +95,15 @@ macro_rules! trace { ($($t:tt)*) => { $crate::__log_macro!($crate::abi::level::T
 /// (`mod.<id>.name`).
 ///
 /// ```ignore
-/// weft_sdk::declare_mod!(deps: ["base"], init: init);
+/// loom_sdk::declare_mod!(deps: ["base"], init: init);
 /// ```
 #[macro_export]
 macro_rules! declare_mod {
     (deps: [$($dep:literal),* $(,)?], init: $init:path $(,)?) => {
         #[unsafe(no_mangle)]
-        pub extern "C" fn weft_mod() -> *const $crate::abi::ModDecl {
+        pub extern "C" fn loom_mod() -> *const $crate::abi::ModDecl {
             static DEPS: &[$crate::abi::Str] = &[$($crate::abi::Str::new($dep)),*];
-            unsafe extern "C" fn __weft_init(
+            unsafe extern "C" fn __loom_init(
                 host: *const $crate::abi::Host,
                 me: $crate::abi::ModId,
                 reg: *mut $crate::abi::Registrar,
@@ -115,7 +115,7 @@ macro_rules! declare_mod {
                 id: $crate::abi::Str::new(env!("CARGO_CRATE_NAME")),
                 version: $crate::abi::Str::new(env!("CARGO_PKG_VERSION")),
                 deps: $crate::abi::Slice::new(DEPS),
-                init: __weft_init,
+                init: __loom_init,
             };
             &DECL
         }

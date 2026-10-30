@@ -10,8 +10,8 @@ use std::rc::Rc;
 use std::task::{Context, Poll, Waker};
 use std::time::{Duration, Instant};
 
-use weft_sdk::client::{self, ClientState, client_flags as cf};
-use weft_sdk::*;
+use loom_sdk::client::{self, ClientState, client_flags as cf};
+use loom_sdk::*;
 
 pub type R = Result<(), String>;
 pub type BoxTest = Pin<Box<dyn Future<Output = R>>>;
@@ -100,13 +100,13 @@ impl T {
     /// A failed check that does not stop the test.
     pub fn fail(&self, msg: impl Into<String>) {
         let m = self.labeled(msg.into());
-        weft_sdk::warn!("[{}] FAIL {m}", self.name());
+        loom_sdk::warn!("[{}] FAIL {m}", self.name());
         self.0.borrow_mut().failures.push(m);
     }
 
     pub fn note(&self, msg: impl Into<String>) {
         let m = self.labeled(msg.into());
-        weft_sdk::info!("[{}] {m}", self.name());
+        loom_sdk::info!("[{}] {m}", self.name());
         self.0.borrow_mut().notes.push(m);
     }
 
@@ -600,7 +600,7 @@ thread_local! {
 }
 
 pub fn start(queue: Vec<TestDef>) {
-    weft_sdk::info!("testkit: running {} test(s): {}", queue.len(), queue.iter().map(|t| t.name.as_str()).collect::<Vec<_>>().join(", "));
+    loom_sdk::info!("testkit: running {} test(s): {}", queue.len(), queue.iter().map(|t| t.name.as_str()).collect::<Vec<_>>().join(", "));
     RUNNER.with(|r| *r.borrow_mut() = Some(Runner { queue, current: None, done: Vec::new(), started: Instant::now(), finished: false, warmup: 3 }));
 }
 
@@ -626,7 +626,7 @@ pub fn frame(c: &Client) {
                 return;
             }
             let def = run.queue.remove(0);
-            weft_sdk::info!("testkit: --- {} ---", def.name);
+            loom_sdk::info!("testkit: --- {} ---", def.name);
             let t = T::new(&def.name);
             ACTIVE.with(|a| *a.borrow_mut() = Some(t.clone()));
             let fut = (def.run)(t.clone());
@@ -657,7 +657,7 @@ pub fn frame(c: &Client) {
                 lines.push(format!("ERROR {e}"));
             }
             let out = Outcome { name: i.name.clone(), ok, secs: began.elapsed().as_secs_f32(), lines };
-            weft_sdk::info!("testkit: {} {} in {:.1} s", if out.ok { "PASS" } else { "FAIL" }, out.name, out.secs);
+            loom_sdk::info!("testkit: {} {} in {:.1} s", if out.ok { "PASS" } else { "FAIL" }, out.name, out.secs);
             drop(i);
             run.done.push(out);
             run.current = None;
@@ -690,7 +690,7 @@ fn finish(c: &Client, run: &mut Runner) {
     let _ = std::fs::create_dir_all(&dir);
     let _ = std::fs::write(format!("{dir}/report.txt"), &report);
     for line in report.lines() {
-        weft_sdk::info!("{line}");
+        loom_sdk::info!("{line}");
     }
     // Test worlds are throwaway.
     if launch_option("test-keep").is_none() {

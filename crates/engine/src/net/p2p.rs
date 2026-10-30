@@ -15,7 +15,7 @@ use super::codec;
 use super::{ClientConn, Conn, ServerConn, ToClient, ToServer};
 use crate::settings::Settings;
 
-const ALPN: &[u8] = b"weft/1";
+const ALPN: &[u8] = b"loom/1";
 const PROTOCOL: u32 = 2;
 const MAX_FRAME: usize = 64 << 20;
 
@@ -56,10 +56,10 @@ pub fn player_key(run_dir: &Path) -> String {
 /// Hash over mods and every registered name: equal hash means equal runtime ids.
 pub fn content_hash() -> u64 {
     let c = crate::content::content();
-    let mut h = weft_noise::FNV;
+    let mut h = loom_noise::FNV;
     let mut eat = |s: &str| {
         for b in s.bytes().chain([0]) {
-            h = weft_noise::fnv_step(h, b as u64);
+            h = loom_noise::fnv_step(h, b as u64);
         }
     };
     for m in &c.mods {
@@ -338,7 +338,7 @@ pub fn join(ticket: &str, settings: &Settings) -> Result<ClientConn, String> {
 mod tests {
     #[test]
     fn identity_is_kept_and_never_replaced() {
-        let dir = std::env::temp_dir().join(format!("weft-identity-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("loom-identity-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         let a = super::identity(&dir).expect("a new identity");
         assert_eq!(super::identity(&dir).expect("read again").public(), a.public());

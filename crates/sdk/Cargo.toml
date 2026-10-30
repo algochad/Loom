@@ -1,9 +1,9 @@
 [package]
-name = "weft_sdk"
+name = "loom_sdk"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-weft_abi.workspace = true
-weft_noise.workspace = true
+loom_abi.workspace = true
+loom_noise.workspace = true

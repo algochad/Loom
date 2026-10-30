@@ -113,14 +113,14 @@ struct Logger {
 
 static LOGGER: OnceLock<Logger> = OnceLock::new();
 
-/// Short target shown in brackets and matched by filters: `weft_engine::server::dim` becomes
-/// `server::dim`, `weft_vulkan` becomes `vulkan`.
+/// Short target shown in brackets and matched by filters: `loom_engine::server::dim` becomes
+/// `server::dim`, `loom_vulkan` becomes `vulkan`.
 fn short(target: &str) -> &str {
-    target.strip_prefix("weft_engine::").or_else(|| target.strip_prefix("weft_")).unwrap_or(target)
+    target.strip_prefix("loom_engine::").or_else(|| target.strip_prefix("loom_")).unwrap_or(target)
 }
 
 fn is_ours(target: &str) -> bool {
-    target.starts_with("weft") || target.starts_with("mod:") || target == "vulkan" || CHANNELS.iter().any(|c| c.0 == target)
+    target.starts_with("loom") || target.starts_with("mod:") || target == "vulkan" || CHANNELS.iter().any(|c| c.0 == target)
 }
 
 /// `verbose` is `--verbose` (debug for everything of ours), `spec` the `--log` filters.

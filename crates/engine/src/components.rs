@@ -9,7 +9,7 @@
 //! same tables directly through `abi::ComponentTable`.
 
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, ModId, Str, entry_kind as ek};
+use loom_abi::{self as abi, ModId, Str, entry_kind as ek};
 
 pub const BLOCK: usize = ek::BLOCK as usize;
 pub const ITEM: usize = ek::ITEM as usize;

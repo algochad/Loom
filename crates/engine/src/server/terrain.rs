@@ -7,8 +7,8 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, Callback, ModId, TerrainColumn, rule_field as rf, terrain_op as op};
-use weft_noise::fixed::{Fields, ONE, div_floor, hash, perlin2, perlin3, q4, q12, ramp, salt, seed32, shape};
+use loom_abi::{self as abi, Callback, ModId, TerrainColumn, rule_field as rf, terrain_op as op};
+use loom_noise::fixed::{Fields, ONE, div_floor, hash, perlin2, perlin3, q4, q12, ramp, salt, seed32, shape};
 
 use crate::host;
 
@@ -143,7 +143,7 @@ pub unsafe fn copy(owner: ModId, d: &abi::TerrainDesc) -> RawTerrain {
     }
 }
 
-/// Where a feature applies, 0..1 (Q12; scales Q4, see `weft_noise::fixed`).
+/// Where a feature applies, 0..1 (Q12; scales Q4, see `loom_noise::fixed`).
 #[derive(Clone, Debug)]
 pub enum Mask {
     Noise { salt: u64, scale: i32, octaves: u32, from: i32, to: i32 },
@@ -753,7 +753,7 @@ impl<T> ColumnCache<T> {
     }
 
     fn shard(&self, x: i32, z: i32) -> &Mutex<FxHashMap<(u64, i32, i32), Arc<std::sync::OnceLock<Arc<T>>>>> {
-        let h = weft_noise::hash(0, x as i64, 0, z as i64) as u32;
+        let h = loom_noise::hash(0, x as i64, 0, z as i64) as u32;
         &self.shards[(h >> 27) as usize % SHARDS]
     }
 

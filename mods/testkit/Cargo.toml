@@ -8,10 +8,10 @@ license.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
-weft_sdk.workspace = true
+loom_sdk.workspace = true
 base_api.workspace = true
 png.workspace = true
 
-# Development tool: left out of `weft --dist`.
-[package.metadata.weft]
+# Development tool: left out of `loom --dist`.
+[package.metadata.loom]
 dist = false

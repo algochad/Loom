@@ -11,7 +11,7 @@ use crate::ui::lang::Lang;
 use crate::ui::text::{self, Arg, Span};
 use crate::ui::{Justify, Kind, NodeId, Style, Ui, desc};
 use crate::app::Running;
-use weft_abi as abi;
+use loom_abi as abi;
 
 pub struct BuildCx<'a> {
     pub lang: &'a Lang,
@@ -277,23 +277,23 @@ impl Screen for ModScreen {
     }
 
     fn pauses(&self) -> bool {
-        self.0.flags & weft_abi::screen_flags::PAUSES != 0
+        self.0.flags & loom_abi::screen_flags::PAUSES != 0
     }
 
     fn escape_closes(&self) -> bool {
-        self.0.flags & weft_abi::screen_flags::KEEP_ON_ESCAPE == 0
+        self.0.flags & loom_abi::screen_flags::KEEP_ON_ESCAPE == 0
     }
 
     fn closes_on_respawn(&self) -> bool {
-        self.0.flags & weft_abi::screen_flags::CLOSES_ON_RESPAWN != 0
+        self.0.flags & loom_abi::screen_flags::CLOSES_ON_RESPAWN != 0
     }
 
     fn shows_chat(&self) -> bool {
-        self.0.flags & weft_abi::screen_flags::SHOWS_CHAT != 0
+        self.0.flags & loom_abi::screen_flags::SHOWS_CHAT != 0
     }
 
     fn keys_first(&self) -> bool {
-        self.0.flags & weft_abi::screen_flags::KEYS_FIRST != 0 || self.0.on_key.is_some()
+        self.0.flags & loom_abi::screen_flags::KEYS_FIRST != 0 || self.0.on_key.is_some()
     }
 
     fn key(&mut self, key: Key, ctx: &mut Ctx) -> bool {
@@ -558,7 +558,7 @@ impl Screen for ConfigScreen {
     }
 
     fn build(&mut self, ui: &mut Ui, cx: &BuildCx) {
-        use weft_abi::config_kind as ck;
+        use loom_abi::config_kind as ck;
         let c = crate::content::content();
         let ns = self.ns.clone();
         let title = self.title.clone().unwrap_or_else(|| "settings.mods.title".into());
@@ -622,7 +622,7 @@ impl Screen for ConfigScreen {
                     };
                     let tip = format!("{key}.tooltip");
                     let mut spans = if cx.lang.has(&tip) { cx.t(&tip, &[]) } else { Vec::new() };
-                    for (on, note) in [(locked, "settings.config_synced"), (d.flags & weft_abi::config_flags::RESTART != 0, "settings.config_restart")] {
+                    for (on, note) in [(locked, "settings.config_synced"), (d.flags & loom_abi::config_flags::RESTART != 0, "settings.config_restart")] {
                         if on {
                             if !spans.is_empty() {
                                 spans.push(Span::text("\n", None));

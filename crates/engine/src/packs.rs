@@ -14,7 +14,7 @@ use std::sync::RwLock;
 
 use crate::assets::Assets;
 
-use weft_render::{Shader, ShaderError};
+use loom_render::{Shader, ShaderError};
 
 use crate::app::{Ctx, Request};
 use crate::screens::{BuildCx, Screen, button, frame, label};

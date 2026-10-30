@@ -4,7 +4,7 @@
 
 use std::ffi::c_void;
 
-use weft_abi::{self as abi, Callback, Str, ui_flags as fl, ui_kind as k};
+use loom_abi::{self as abi, Callback, Str, ui_flags as fl, ui_kind as k};
 
 use crate::app::Running;
 use crate::client::modui;

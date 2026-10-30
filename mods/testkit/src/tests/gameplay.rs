@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use super::{add, at};
 use crate::runner::{R, T};
@@ -402,7 +402,7 @@ pub async fn sounds(t: T) -> R {
     t.hold("core:forward", 1.5);
     t.until("steps", std::time::Duration::from_secs(3), |t| t.state().sounds >= before + 2).await?;
     t.cmd("/music").await?;
-    t.until("music", std::time::Duration::from_secs(3), |t| t.flag(weft_sdk::client::client_flags::MUSIC)).await?;
+    t.until("music", std::time::Duration::from_secs(3), |t| t.flag(loom_sdk::client::client_flags::MUSIC)).await?;
     // A mob's voice comes from `sounds/entity/<kind>/hurt*` by itself.
     let pig = add(t.feet(), [0, 0, -2]);
     t.op(&format!("spawn pig {}", at(pig))).await?;
@@ -458,9 +458,9 @@ pub async fn creative_and_invulnerable(t: T) -> R {
 pub async fn creative_clicks(t: T) -> R {
     t.flat().await?;
     t.op("mode creative").await?;
-    weft_sdk::settings::VSYNC.set(false);
+    loom_sdk::settings::VSYNC.set(false);
     let r = creative_clicks_fast(&t).await;
-    weft_sdk::settings::VSYNC.set(true);
+    loom_sdk::settings::VSYNC.set(true);
     r
 }
 
@@ -594,7 +594,7 @@ pub async fn own_names(t: T) -> R {
     t.op("put me 0 chest 1").await?;
     t.c().select(0);
     t.cmd("/rename Loot Box").await?;
-    t.until("the stack renamed", Duration::from_secs(3), |t| weft_sdk::stack_name(&t.c().inventory_slot(0)).as_deref() == Some("Loot Box")).await?;
+    t.until("the stack renamed", Duration::from_secs(3), |t| loom_sdk::stack_name(&t.c().inventory_slot(0)).as_deref() == Some("Loot Box")).await?;
     let chest = add(f, [0, 0, -2]);
     t.look_at(add(chest, [0, -1, 0]));
     t.frames(2).await?;
@@ -611,7 +611,7 @@ pub async fn own_names(t: T) -> R {
     t.no_screen().await?;
     t.op(&format!("break {} wood_axe", at(chest))).await?;
     t.c().teleport([chest[0] as f64 + 0.5, chest[1] as f64, chest[2] as f64 + 0.5]);
-    let back = t.until("the chest picked up", Duration::from_secs(5), |t| (0..36).any(|i| weft_sdk::stack_name(&t.c().inventory_slot(i)).as_deref() == Some("Loot Box"))).await;
+    let back = t.until("the chest picked up", Duration::from_secs(5), |t| (0..36).any(|i| loom_sdk::stack_name(&t.c().inventory_slot(i)).as_deref() == Some("Loot Box"))).await;
     t.check(back.is_ok(), "the broken chest's item has its name again");
     Ok(())
 }

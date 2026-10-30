@@ -8,7 +8,7 @@ use std::sync::{Arc, OnceLock};
 
 use parking_lot::RwLock;
 use rustc_hash::FxHashMap;
-use weft_abi::ItemStack;
+use loom_abi::ItemStack;
 
 /// Components of one stack, sorted by component id.
 pub type Data = Arc<[(u32, Box<[u8]>)]>;
@@ -113,12 +113,12 @@ fn without(data: u32, flag: u32) -> u32 {
 
 /// The stack as clients may see it: without `SERVER_ONLY` components.
 pub fn for_client(s: ItemStack) -> ItemStack {
-    ItemStack { data: without(s.data, weft_abi::stack_flags::SERVER_ONLY), ..s }
+    ItemStack { data: without(s.data, loom_abi::stack_flags::SERVER_ONLY), ..s }
 }
 
 /// Stack data to write to saves: without `NO_SAVE` components.
 pub fn for_save(data: u32) -> u32 {
-    without(data, weft_abi::stack_flags::NO_SAVE)
+    without(data, loom_abi::stack_flags::NO_SAVE)
 }
 
 /// Components by name, for saves and the network; names the reader does not know are dropped.

@@ -175,7 +175,7 @@ impl BlockList {
 /// declare the same struct agree without depending on each other.
 ///
 /// ```ignore
-/// weft_sdk::value! {
+/// loom_sdk::value! {
 ///     pub struct Food { pub hunger: u32, pub saturation: f32 }
 /// }
 /// ```

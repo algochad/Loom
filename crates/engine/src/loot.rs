@@ -3,7 +3,7 @@
 //! names (chests). Other mods change tables with modifiers instead of replacing them.
 
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, ItemStack, ModId, loot_cond as lc};
+use loom_abi::{self as abi, ItemStack, ModId, loot_cond as lc};
 
 use crate::components::{self as comps, Components};
 

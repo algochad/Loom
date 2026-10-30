@@ -9,7 +9,7 @@ use std::sync::atomic::AtomicU64;
 
 use glam::{DVec3, IVec3};
 use rustc_hash::{FxHashMap, FxHashSet};
-use weft_abi as abi;
+use loom_abi as abi;
 
 use super::dim::{Dim, section_of, section_of_cube};
 use crate::content::Content;
@@ -37,7 +37,7 @@ impl DimSet {
 
     fn new_region(&mut self, section: IVec3) -> usize {
         let mut d = Dim::new(self.id, self.seed, self.next_id.clone());
-        d.set_rng(weft_noise::hash(self.seed ^ self.time, section.x as i64, section.y as i64, section.z as i64));
+        d.set_rng(loom_noise::hash(self.seed ^ self.time, section.x as i64, section.y as i64, section.z as i64));
         d.time = self.time;
         self.regions.push(d);
         self.regions.len() - 1

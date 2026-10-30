@@ -8,5 +8,5 @@ license.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
-weft_sdk.workspace = true
+loom_sdk.workspace = true
 base_api.workspace = true

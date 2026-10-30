@@ -58,7 +58,7 @@ pub fn local_index(p: IVec3) -> usize {
 
 pub const DIRS: [IVec3; 6] = [IVec3::NEG_X, IVec3::X, IVec3::NEG_Y, IVec3::Y, IVec3::NEG_Z, IVec3::Z];
 
-pub use weft_noise::{Rng, mix};
+pub use loom_noise::{Rng, mix};
 
 /// The corners of the box around every block that is not air (a structure's body).
 pub fn block_bounds<'a>(cubes: impl Iterator<Item = (&'a IVec3, &'a cube::Cube)>) -> Option<(IVec3, IVec3)> {

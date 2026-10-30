@@ -1,8 +1,8 @@
 use std::time::Duration;
 
-use weft_sdk::abi::entry_kind as ek;
-use weft_sdk::terrain::Column;
-use weft_sdk::*;
+use loom_sdk::abi::entry_kind as ek;
+use loom_sdk::terrain::Column;
+use loom_sdk::*;
 
 use super::{add, at};
 use super::probe;
@@ -256,9 +256,9 @@ pub async fn crater_view(t: T) -> R {
 /// never drawn) is announced like any other: the client keeps the edit, not generation. It
 /// used to be announced only up to the view's top.
 pub async fn sky_column_edit(t: T) -> R {
-    weft_sdk::settings::VIEW_DISTANCE.set(6);
+    loom_sdk::settings::VIEW_DISTANCE.set(6);
     let r = sky_column(&t).await;
-    weft_sdk::settings::VIEW_DISTANCE.set(12);
+    loom_sdk::settings::VIEW_DISTANCE.set(12);
     r
 }
 

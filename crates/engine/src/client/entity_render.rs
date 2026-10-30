@@ -6,7 +6,7 @@ use crate::gpu_layout::box_mode;
 use super::models::{MAX_LAYERS, Posed};
 use glam::{DVec3, IVec3, Mat4, Quat, Vec3, Vec4};
 use rustc_hash::FxHashMap;
-use weft_render::*;
+use loom_render::*;
 
 use super::ClientEntity;
 use super::models::{Instance, Models};
@@ -20,7 +20,7 @@ use crate::gpu_layout::{GpuBox, Scene};
 /// What the first person view holds: the item (or the bare arm), the swing progress and the
 /// walk distance for bobbing.
 pub struct Hand {
-    pub stack: weft_abi::ItemStack,
+    pub stack: loom_abi::ItemStack,
     pub swing: Option<f32>,
     /// The local player's animation started by the server and the player's age, for the `hand`
     /// bone of its keyframes.
@@ -224,7 +224,7 @@ impl EntityRenderer {
         let (s, mut slots) = crate::packs::compose(assets, "model.wgsl", &[(&HOOK, &snippets)]).map_err(|e| e.0)?;
         let slots = slots.pop().unwrap_or_default();
         let c = content();
-        let comp = c.components.id(weft_abi::comp::SHADER);
+        let comp = c.components.id(loom_abi::comp::SHADER);
         let kinds = (0..c.game.entities.len() as u32)
             .map(|k| {
                 let name = comp.and_then(|id| c.components.text(crate::components::ENTITY, k, id));

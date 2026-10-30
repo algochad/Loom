@@ -3,7 +3,7 @@
 
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use super::add;
 use crate::runner::{R, T};

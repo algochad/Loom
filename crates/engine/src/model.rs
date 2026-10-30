@@ -8,7 +8,7 @@
 
 use glam::{EulerRot, Mat4, Quat, Vec3};
 use serde_json::Value;
-use weft_abi::{MeshVertex, worn_parts};
+use loom_abi::{MeshVertex, worn_parts};
 
 use crate::registry::{Cuboid, Part};
 

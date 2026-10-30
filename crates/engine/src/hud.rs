@@ -1,7 +1,7 @@
 //! In-game overlay: crosshair, hotbar, debug lines, chat, and HUD parts registered by mods.
 //! Rebuilt only when what it shows changes; mod parts update through their bindings.
 
-use weft_abi::ItemStack;
+use loom_abi::ItemStack;
 
 use crate::app::Ctx;
 use crate::client::Client;
@@ -21,7 +21,7 @@ pub const TAG_HOTBAR: u32 = 1;
 enum Part {
     Hotbar,
     HeldName,
-    Mod(weft_abi::ModId, weft_abi::Callback),
+    Mod(loom_abi::ModId, loom_abi::Callback),
 }
 pub const TAG_CROSSHAIR: u32 = 2;
 
@@ -68,7 +68,7 @@ impl Hud {
         let c = content();
         // Elements per anchor, mod parts plus the hotbar itself, with the player's overrides.
         // The engine's own elements are placed like the mods': `config/hud.txt` moves them too.
-        let engine = [("core:hotbar", weft_abi::hud_anchor::HOTBAR, Part::Hotbar), ("core:held_name", weft_abi::hud_anchor::ABOVE_HOTBAR, Part::HeldName)];
+        let engine = [("core:hotbar", loom_abi::hud_anchor::HOTBAR, Part::Hotbar), ("core:held_name", loom_abi::hud_anchor::ABOVE_HOTBAR, Part::HeldName)];
         let mut placed: Vec<(String, i32, Part)> = engine
             .into_iter()
             .map(|(n, a, p)| (n.to_string(), a.to_string(), 0, p))
@@ -106,7 +106,7 @@ impl Hud {
                 });
             }
         };
-        use weft_abi::hud_anchor as a;
+        use loom_abi::hud_anchor as a;
         let ui = &mut self.ui;
         ui.clear();
         ui.root_style(Style::default().stretch());
@@ -379,7 +379,7 @@ fn loaded(ren: &mut UiRenderer, look: &Look, class: &str, r: Rect, scale: f32) {
 
 
 /// What a stack is called: its own name, else its item's.
-pub fn stack_name(lang: &Lang, input: Option<&crate::input::Input>, stack: weft_abi::ItemStack) -> Vec<text::Span> {
+pub fn stack_name(lang: &Lang, input: Option<&crate::input::Input>, stack: loom_abi::ItemStack) -> Vec<text::Span> {
     match crate::stack::name(&stack) {
         Some(n) => text::rich(&text::escape(&n), lang, input),
         None => text::Name::Item(stack.item).spans(lang, input),
@@ -388,7 +388,7 @@ pub fn stack_name(lang: &Lang, input: Option<&crate::input::Input>, stack: weft_
 
 /// The name, then the `<name key>.tooltip` translation in gray (details usually behind
 /// `{on_key:core:sneak}`) and the mods' own lines under it, then durability for damaged tools.
-pub fn item_tooltip(lang: &Lang, input: &crate::input::Input, stack: weft_abi::ItemStack) -> Vec<text::Span> {
+pub fn item_tooltip(lang: &Lang, input: &crate::input::Input, stack: loom_abi::ItemStack) -> Vec<text::Span> {
     let gray = lang.color("color.tooltip_dim").map(|c| c >> 8);
     let cx = text::Ctx::new(lang, Some(input));
     let name = text::Name::Item(stack.item);
@@ -423,11 +423,11 @@ pub fn item_tooltip(lang: &Lang, input: &crate::input::Input, stack: weft_abi::I
     out
 }
 
-type ModPart = (weft_abi::ModId, weft_abi::Callback);
+type ModPart = (loom_abi::ModId, loom_abi::Callback);
 
 /// Mods' F3 panels in group order (after the engine's): title key, right side, part.
 pub fn mod_debug_groups() -> Vec<(&'static str, bool, ModPart)> {
-    use weft_abi::hud_anchor as a;
+    use loom_abi::hud_anchor as a;
     let mut v: Vec<_> = content().game.huds.iter().filter(|h| h.anchor == a::DEBUG_LEFT || h.anchor == a::DEBUG_RIGHT).collect();
     v.sort_by_key(|h| h.order);
     v.into_iter().take(9 - DEBUG_GROUPS.len()).map(|h| (h.title.as_str(), h.anchor == a::DEBUG_RIGHT, (h.owner, h.cb))).collect()

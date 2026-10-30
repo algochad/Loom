@@ -6,7 +6,7 @@ use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::time::Instant;
 
 use glam::{DVec3, IVec3};
-use weft_abi::{self as abi, Callback, Host, ItemStack, ModId, Str};
+use loom_abi::{self as abi, Callback, Host, ItemStack, ModId, Str};
 
 use crate::content::{self, RawRegistrar, content, try_content};
 use crate::registry;

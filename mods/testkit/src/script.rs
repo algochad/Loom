@@ -29,8 +29,8 @@
 
 use std::time::Duration;
 
-use weft_sdk::client::client_flags as cf;
-use weft_sdk::launch_option;
+use loom_sdk::client::client_flags as cf;
+use loom_sdk::launch_option;
 
 use crate::runner::{R, T};
 
@@ -51,13 +51,13 @@ pub async fn run(t: T, src: String) -> R {
             "wait" => t.secs(num(0, 1.0)).await?,
             "loaded" => {
                 t.loaded().await?;
-                weft_sdk::info!("script: loaded at {:.2} s", started.elapsed().as_secs_f32());
+                loom_sdk::info!("script: loaded at {:.2} s", started.elapsed().as_secs_f32());
             }
             "idle" => {
                 t.idle().await?;
                 let s = t.state();
-                weft_sdk::info!("script: idle at {:.2} s", started.elapsed().as_secs_f32());
-                weft_sdk::info!(
+                loom_sdk::info!("script: idle at {:.2} s", started.elapsed().as_secs_f32());
+                loom_sdk::info!(
                     "load: {} cubes on client ({} of them made on the GPU, {} differing from the CPU), server generated {} ({:.0} us each on a worker), inserted {} ({:.0} us each on the server thread)",
                     s.cubes,
                     s.gpu_cubes,
@@ -85,7 +85,7 @@ pub async fn run(t: T, src: String) -> R {
             "look" => t.c().look(num(0, 0.0), num(1, 0.0)),
             "chat" => t.c().chat(rest),
             "say_config" => {
-                let cfg = weft_sdk::Config::<f64>::named(Box::leak(rest.to_string().into_boxed_str()));
+                let cfg = loom_sdk::Config::<f64>::named(Box::leak(rest.to_string().into_boxed_str()));
                 t.c().chat(&format!("config {rest} = {}", cfg.get()));
             }
             "shot" => {
@@ -116,9 +116,9 @@ pub async fn run(t: T, src: String) -> R {
             "origin" => origin = t.state().pos,
             "where" => {
                 let s = t.state();
-                weft_sdk::info!("script: where {:.3} {:.3} {:.3} {rest}", s.pos[0], s.pos[1], s.pos[2]);
+                loom_sdk::info!("script: where {:.3} {:.3} {:.3} {rest}", s.pos[0], s.pos[1], s.pos[2]);
             }
-            "rec" => weft_sdk::info!("REC {rest}"),
+            "rec" => loom_sdk::info!("REC {rest}"),
             "via" => match waypoint(origin, rest) {
                 Some(mut w) => {
                     for k in 0..3 {
@@ -239,13 +239,13 @@ async fn fly(t: &T, mut pts: Vec<[f64; 5]>, secs: f64, eye: f64) -> R {
         p[3] += shake * (0.45 * (tm * 0.9).sin() + 0.25 * (tm * 2.3 + 1.0).sin());
         p[4] += shake * (0.35 * (tm * 0.7 + 2.0).sin() + 0.2 * (tm * 1.9).sin());
         let c = t.c();
-        c.control(&weft_sdk::abi::PlayerControl {
-            mask: weft_sdk::abi::control_mask::POS | weft_sdk::abi::control_mask::VEL | weft_sdk::abi::control_mask::LOOK,
+        c.control(&loom_sdk::abi::PlayerControl {
+            mask: loom_sdk::abi::control_mask::POS | loom_sdk::abi::control_mask::VEL | loom_sdk::abi::control_mask::LOOK,
             pos: [p[0], p[1] - eye, p[2]],
             vel: [0.0; 3],
             yaw: p[3].to_radians() as f32,
             pitch: p[4].to_radians() as f32,
-            ..weft_sdk::abi::PlayerControl::DEFAULT
+            ..loom_sdk::abi::PlayerControl::DEFAULT
         });
     }
     Ok(())

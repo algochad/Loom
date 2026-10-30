@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use super::{add, probe};
 use crate::runner::{R, T};
@@ -142,10 +142,10 @@ pub async fn texture_reload(t: T) -> R {
         t.settled().await?;
         t.grab().await
     };
-    weft_sdk::settings::RESOURCE_PACKS.set("testkit_reload");
+    loom_sdk::settings::RESOURCE_PACKS.set("testkit_reload");
     let red = reload(Some([200, 40, 40])).await?;
     let blue = reload(Some([40, 40, 200])).await?;
-    weft_sdk::settings::RESOURCE_PACKS.set("");
+    loom_sdk::settings::RESOURCE_PACKS.set("");
     let back = reload(None).await?;
     t.check(T::differ(&plain, &red) > 0.2, "the pack's dirt shows after a reload");
     t.check(T::differ(&red, &blue) > 0.2, "a changed file shows after the next reload");
@@ -160,7 +160,7 @@ pub async fn pack_lang(t: T) -> R {
     let dir = format!("{pack}/core/lang");
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     std::fs::write(format!("{dir}/en_us.lang"), "menu.done = Pack Done\n").map_err(|e| e.to_string())?;
-    weft_sdk::settings::RESOURCE_PACKS.set("testkit_lang");
+    loom_sdk::settings::RESOURCE_PACKS.set("testkit_lang");
     t.c().reload_assets();
     t.frames(2).await?;
     t.c().open_screen(&screens::SETTINGS);
@@ -168,7 +168,7 @@ pub async fn pack_lang(t: T) -> R {
     t.frames(2).await?;
     t.laid_out(&["text:Pack Done", "text:View distance", "text:Language"]);
     t.c().close_screen();
-    weft_sdk::settings::RESOURCE_PACKS.set("");
+    loom_sdk::settings::RESOURCE_PACKS.set("");
     drop(std::fs::remove_dir_all(&pack));
     t.c().reload_assets();
     t.frames(2).await?;
@@ -196,11 +196,11 @@ pub async fn broken_shader_pack(t: T) -> R {
     for name in ["world.wgsl", "entity.wgsl", "model.wgsl", "particle.wgsl", "post.wgsl", "ui.wgsl"] {
         std::fs::write(format!("{dir}/{name}"), "this is not wgsl").map_err(|e| e.to_string())?;
     }
-    weft_sdk::settings::SHADER_PACK.set("testkit_broken");
+    loom_sdk::settings::SHADER_PACK.set("testkit_broken");
     t.c().reload_assets();
     t.frames(5).await?;
     let after = t.grab().await?;
-    weft_sdk::settings::SHADER_PACK.set("");
+    loom_sdk::settings::SHADER_PACK.set("");
     t.c().reload_assets();
     let _ = std::fs::remove_dir_all(&dir);
     t.frames(2).await?;
@@ -215,11 +215,11 @@ pub async fn broken_shader_pack(t: T) -> R {
     let sepia = world.replace(ending, "    let y = dot(mix(lit.rgb, scene.fog_color.rgb, fog), vec3(0.3, 0.59, 0.11));
     return vec4(vec3(y * 1.2, y, y * 0.75), lit.a);");
     std::fs::write(format!("{dir}/world.wgsl"), sepia).map_err(|e| e.to_string())?;
-    weft_sdk::settings::SHADER_PACK.set("testkit_sepia");
+    loom_sdk::settings::SHADER_PACK.set("testkit_sepia");
     t.c().reload_assets();
     t.frames(5).await?;
     let shot = t.shot("sepia").await?;
-    weft_sdk::settings::SHADER_PACK.set("");
+    loom_sdk::settings::SHADER_PACK.set("");
     t.c().reload_assets();
     let _ = std::fs::remove_dir_all(&dir);
     t.frames(2).await?;
@@ -299,12 +299,12 @@ pub async fn block_model_file(t: T) -> R {
     let file = format!("{pack}/testmod/models/block/pedestal.json");
     std::fs::create_dir_all(std::path::Path::new(&file).parent().unwrap()).map_err(|e| e.to_string())?;
     std::fs::write(&file, r#"{"elements":[{"from":[0,0,0],"to":[16,16,16],"faces":{"north":{},"south":{},"east":{},"west":{},"up":{},"down":{}}}]}"#).map_err(|e| e.to_string())?;
-    weft_sdk::settings::RESOURCE_PACKS.set("testkit_shapes");
+    loom_sdk::settings::RESOURCE_PACKS.set("testkit_shapes");
     t.c().reload_assets();
     t.frames(5).await?;
     t.settled().await?;
     let cube = t.shot("pedestal_pack").await?;
-    weft_sdk::settings::RESOURCE_PACKS.set("");
+    loom_sdk::settings::RESOURCE_PACKS.set("");
     let _ = std::fs::remove_dir_all(&pack);
     t.c().reload_assets();
     t.frames(2).await?;

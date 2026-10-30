@@ -1,4 +1,4 @@
-// Terrain on the GPU: the same integer math as `weft_noise::fixed` and `server::terrain`, line
+// Terrain on the GPU: the same integer math as `loom_noise::fixed` and `server::terrain`, line
 // by line, so every block comes out as the CPU makes it. One workgroup per cube: columns, then
 // the cave grid, then the blocks.
 
@@ -532,7 +532,7 @@ fn generate(@builtin(workgroup_id) wg: vec3<u32>, @builtin(local_invocation_inde
     }
 }
 
-// 64-bit integers as (low, high) words, for `weft_noise::hash` (scattered things' sites).
+// 64-bit integers as (low, high) words, for `loom_noise::hash` (scattered things' sites).
 fn mul32(a: u32, b: u32) -> vec2<u32> {
     let a0 = a & 65535u;
     let a1 = a >> 16u;
@@ -574,7 +574,7 @@ fn widen(v: i32) -> vec2<u32> {
     return vec2<u32>(u32(v), select(0u, 4294967295u, v < 0));
 }
 
-// `weft_noise::hash(seed, x, 0, z)`.
+// `loom_noise::hash(seed, x, 0, z)`.
 fn hash64(seed: vec2<u32>, x: i32, z: i32) -> vec2<u32> {
     var h = seed ^ mul64(widen(x), vec2<u32>(0x7F4A7C15u, 0x9E3779B9u));
     h = h ^ mul64(widen(z), vec2<u32>(0x9E3779F9u, 0x165667B1u));

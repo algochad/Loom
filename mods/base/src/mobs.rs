@@ -1,7 +1,7 @@
 //! Mobs: zombies and spiders at night or in the dark, pigs and cows on grass by day.
 
-use weft_sdk::ai::{self, Goal};
-use weft_sdk::*;
+use loom_sdk::ai::{self, Goal};
+use loom_sdk::*;
 
 value! {
     #[derive(Default)]

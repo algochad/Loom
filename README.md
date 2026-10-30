@@ -1,4 +1,4 @@
-<h1 align="center">Weft</h1>
+<h1 align="center">Loom</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Rust-1.90%2B-B7410E?logo=rust&logoColor=white" alt="Rust 1.90+">
@@ -8,16 +8,16 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/VortexSo4/Weft/releases"><b>Download</b></a> ·
+  <a href="https://github.com/VortexSo4/Loom/releases"><b>Download</b></a> ·
   <a href="docs/modding.md"><b>Modding</b></a> ·
   <a href="docs"><b>Documentation</b></a> ·
   <a href="#project-status"><b>Project status</b></a> ·
   <a href="#contributing"><b>Contributing</b></a>
 </p>
 
-Weft is a voxel sandbox engine written in Rust. The game itself is a mod, `mods/base`, built only on the public SDK: it has no private hooks into the engine, so anything it does, another mod can do or change. Weft is not a Minecraft clone and does not read Minecraft worlds; it plays like one and borrows its numbers where that makes sense.
+Loom is a voxel sandbox engine written in Rust. The game itself is a mod, `mods/base`, built only on the public SDK: it has no private hooks into the engine, so anything it does, another mod can do or change. Loom is not a Minecraft clone and does not read Minecraft worlds; it plays like one and borrows its numbers where that makes sense.
 
-> Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Weft contains no Minecraft code or assets.
+> Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Loom contains no Minecraft code or assets.
 
 ## Features
 
@@ -37,17 +37,17 @@ Weft is a voxel sandbox engine written in Rust. The game itself is a mod, `mods/
 
 ## Download
 
-Get the latest build from [Releases](https://github.com/VortexSo4/Weft/releases), unpack it and run `weft`. You need a GPU with Vulkan. Only Windows is tested so far.
+Get the latest build from [Releases](https://github.com/VortexSo4/Loom/releases), unpack it and run `loom`. You need a GPU with Vulkan. Only Windows is tested so far.
 
-Weft ships with its own textures. If Minecraft is installed through the official launcher or Prism, Weft builds a resource pack from that copy when it starts. The pack stays on your computer and can be turned off in Settings > Resource Packs.
+Loom ships with its own textures. If Minecraft is installed through the official launcher or Prism, Loom builds a resource pack from that copy when it starts. The pack stays on your computer and can be turned off in Settings > Resource Packs.
 
 ## Build from source
 
 Requires Rust 1.90 or newer.
 
 ```sh
-git clone https://github.com/VortexSo4/Weft.git
-cd Weft
+git clone https://github.com/VortexSo4/Loom.git
+cd Loom
 cargo run --release
 ```
 

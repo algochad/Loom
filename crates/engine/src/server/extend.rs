@@ -5,7 +5,7 @@
 use std::cell::RefCell;
 use std::sync::atomic::Ordering;
 
-use weft_abi::{self as abi, verdict};
+use loom_abi::{self as abi, verdict};
 
 use super::dim::Dim;
 use crate::content::Content;
@@ -269,7 +269,7 @@ impl Dim {
     }
 
     /// Rolls a loot table with this region's random stream.
-    pub fn roll_loot(&mut self, c: &Content, table: &str, ctx: &crate::loot::Ctx) -> Vec<weft_abi::ItemStack> {
+    pub fn roll_loot(&mut self, c: &Content, table: &str, ctx: &crate::loot::Ctx) -> Vec<loom_abi::ItemStack> {
         let Some(t) = c.loot.get(table) else { return Vec::new() };
         let mut rng = || self.random_unit();
         crate::loot::roll(c, t, ctx, &mut rng)

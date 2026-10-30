@@ -1,6 +1,6 @@
 //! Furnace and chest: blocks with an entity holding their inventory and state.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use crate::blocks::{CHEST, FURNACE};
 use crate::items::FUEL;

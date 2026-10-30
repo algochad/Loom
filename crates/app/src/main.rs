@@ -1,13 +1,13 @@
 use std::path::PathBuf;
 
-use weft_engine::Options;
-use weft_render::{Backend, BackendDesc, Error};
+use loom_engine::Options;
+use loom_render::{Backend, BackendDesc, Error};
 
 #[global_allocator]
-static ALLOC: weft_engine::diag::CountingAlloc = weft_engine::diag::CountingAlloc;
+static ALLOC: loom_engine::diag::CountingAlloc = loom_engine::diag::CountingAlloc;
 
 fn vulkan(desc: &BackendDesc) -> Result<Box<dyn Backend>, Error> {
-    Ok(Box::new(weft_vulkan::VulkanBackend::new(desc)?))
+    Ok(Box::new(loom_vulkan::VulkanBackend::new(desc)?))
 }
 
 /// Where `run` (and, in the source tree, `mods`) live: the working directory if it has either,
@@ -79,10 +79,10 @@ fn main() {
         }
     }
     opts.automated = extra.iter().any(|(k, _)| k == "script" || k == "test");
-    weft_engine::set_launch_options(extra);
+    loom_engine::set_launch_options(extra);
     let player_mods = opts.run_dir.join("mods");
     if let Some(dir) = pack {
-        match weft_engine::modloader::pack(&dir, &player_mods) {
+        match loom_engine::modloader::pack(&dir, &player_mods) {
             Ok(path) => println!("packed {}", path.display()),
             Err(e) => eprintln!("cannot pack {}: {e}", dir.display()),
         }
@@ -95,13 +95,13 @@ fn main() {
         }
         return;
     }
-    weft_engine::log::init(Some(&opts.run_dir.join("logs").join("latest.log")), verbose, &log_spec);
-    weft_engine::diag::install_crash_handler(&opts.run_dir);
+    loom_engine::log::init(Some(&opts.run_dir.join("logs").join("latest.log")), verbose, &log_spec);
+    loom_engine::diag::install_crash_handler(&opts.run_dir);
     // Release builds load the game's own mods the way players get them: each packed into one
     // file in `run/mods` (again only when it changed).
     if !cfg!(debug_assertions) && root.join("mods").is_dir() {
         for dir in subdirs(&root.join("mods")) {
-            match weft_engine::modloader::pack_if_stale(&dir, &player_mods) {
+            match loom_engine::modloader::pack_if_stale(&dir, &player_mods) {
                 Ok((path, true)) => log::info!("packed {}", path.display()),
                 Ok(_) => {}
                 Err(e) => log::warn!("cannot pack {}: {e}", dir.display()),
@@ -111,12 +111,12 @@ fn main() {
         opts.mod_dirs.retain(|d| *d != sources);
     }
     opts.mod_dirs.push(player_mods);
-    weft_engine::init_workers();
-    if let Err(e) = weft_engine::run(vulkan, opts) {
+    loom_engine::init_workers();
+    if let Err(e) = loom_engine::run(vulkan, opts) {
         log::error!("{e}");
         std::process::exit(1);
     }
-    std::process::exit(weft_engine::exit_code());
+    std::process::exit(loom_engine::exit_code());
 }
 
 fn subdirs(dir: &std::path::Path) -> Vec<PathBuf> {
@@ -137,7 +137,7 @@ fn make_dist(root: &std::path::Path, out: &std::path::Path) -> Result<(), String
         if manifest.lines().any(|l| l.replace(' ', "") == "dist=false") {
             continue;
         }
-        weft_engine::modloader::pack(&dir, &out.join("run").join("mods"))?;
+        loom_engine::modloader::pack(&dir, &out.join("run").join("mods"))?;
     }
     Ok(())
 }

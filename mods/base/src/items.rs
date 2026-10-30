@@ -1,4 +1,4 @@
-use weft_sdk::*;
+use loom_sdk::*;
 
 pub static STICK: Item = Item::named("stick");
 pub static COAL: Item = Item::named("coal");

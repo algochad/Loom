@@ -4,7 +4,7 @@
 //! Everything else (plants, boxes, liquids): 8-word quads with explicit corners.
 
 use crate::gpu_layout::{face, quad};
-use weft_abi::{Layer, Model, block_flags as bf};
+use loom_abi::{Layer, Model, block_flags as bf};
 
 use crate::content::Content;
 

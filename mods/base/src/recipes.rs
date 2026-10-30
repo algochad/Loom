@@ -1,7 +1,7 @@
 //! Crafting and smelting recipes. Every ingredient is a `#tag`, so another mod's planks, coal or
 //! dyes work in all of them without a recipe of its own.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 pub use base_api::{CRAFTING, SMELTING};
 const C: &RecipeKind = &CRAFTING;

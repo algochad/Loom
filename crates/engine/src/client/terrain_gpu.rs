@@ -10,9 +10,9 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use crossbeam_channel::{Receiver, Sender};
 use glam::IVec3;
-use weft_abi::TerrainColumn;
-use weft_noise::fixed::{Fields, seed32};
-use weft_render::{Backend, BufferId, Cmd, CommandList, ComputeDesc, PipelineId, usage};
+use loom_abi::TerrainColumn;
+use loom_noise::fixed::{Fields, seed32};
+use loom_render::{Backend, BufferId, Cmd, CommandList, ComputeDesc, PipelineId, usage};
 
 use crate::content::{Content, content};
 use crate::server::area::{self, AreaFill};
@@ -123,7 +123,7 @@ pub fn describe(c: &Content, dim: u32, seed: u64) -> Option<(Vec<i32>, Vec<usize
     }
     w[d::CAVE_OFF as usize] = w.len() as i32;
     for (k, b) in t.cave_biomes.iter().enumerate() {
-        let cave: [i32; words::CAVE as usize] = [b.biome as i32, b.depth, b.size, b.threshold, seed32(seed, weft_noise::fixed::salt::CAVE_BIOME ^ k as u64) as i32];
+        let cave: [i32; words::CAVE as usize] = [b.biome as i32, b.depth, b.size, b.threshold, seed32(seed, loom_noise::fixed::salt::CAVE_BIOME ^ k as u64) as i32];
         w.extend_from_slice(&cave);
     }
     Some((w, custom))
@@ -139,7 +139,7 @@ pub fn describe_lod(c: &Content, dim: u32, seed: u64) -> Option<(Vec<i32>, Vec<u
     w[d::SCATTER_OFF as usize] = w.len() as i32;
     w.push(def.scatters.len() as i32);
     let biomes = c.biomes.len().max(1);
-    let mut buf = vec![weft_abi::ScatterBlock { offset: [0; 3], state: 0, force: 0 }; 4096];
+    let mut buf = vec![loom_abi::ScatterBlock { offset: [0; 3], state: 0, force: 0 }; 4096];
     for sc in &def.scatters {
         let key = seed ^ sc.salt;
         w.extend_from_slice(&[sc.cell, sc.reach, key as u32 as i32, (key >> 32) as u32 as i32, biomes as i32]);
@@ -148,7 +148,7 @@ pub fn describe_lod(c: &Content, dim: u32, seed: u64) -> Option<(Vec<i32>, Vec<u
             let threshold = (density as f64 * (1u64 << 53) as f64).ceil() as u64;
             let (mut tops, mut radii, mut states) = (Vec::new(), Vec::new(), rustc_hash::FxHashMap::<u32, u32>::default());
             for k in 0..8u64 {
-                let mut args = weft_abi::ScatterArgs { seed, dim, pos: [0, 64, 0], biome: b, random: weft_noise::mix(k), out: buf.as_mut_ptr(), cap: buf.len() as u32, len: 0 };
+                let mut args = loom_abi::ScatterArgs { seed, dim, pos: [0, 64, 0], biome: b, random: loom_noise::mix(k), out: buf.as_mut_ptr(), cap: buf.len() as u32, len: 0 };
                 if threshold == 0 || !crate::host::invoke(sc.owner, sc.shape, &mut args) {
                     continue;
                 }

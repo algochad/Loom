@@ -7,7 +7,7 @@ use std::sync::Arc;
 use crossbeam_channel::{Receiver, Sender, TryRecvError, unbounded};
 use glam::{DVec3, IVec3};
 
-use weft_abi::ItemStack;
+use loom_abi::ItemStack;
 
 use crate::world::Cube;
 use codec::Wire;
@@ -223,7 +223,7 @@ messages! {
         Packet { channel: u32, data: Vec<u8> },
         /// Components of other entities: (entity, component id, bytes).
         EntityComponents(Vec<(u64, u32, Vec<u8>)>),
-        Particles(Vec<weft_abi::ParticleBurst>),
+        Particles(Vec<loom_abi::ParticleBurst>),
         /// The server's values of `SYNCED` settings: (config id, value).
         Configs(Vec<(u32, f64)>),
         /// Sound events: (event, position, volume, pitch or 0).

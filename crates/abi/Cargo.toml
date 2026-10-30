@@ -1,5 +1,5 @@
 [package]
-name = "weft_abi"
+name = "loom_abi"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

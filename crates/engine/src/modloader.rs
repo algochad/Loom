@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 use std::time::Instant;
 
 use rayon::prelude::*;
-use weft_abi::{self as abi, ModId};
+use loom_abi::{self as abi, ModId};
 
 use crate::content::{self, ModMeta, RawRegistrar};
 
@@ -165,10 +165,10 @@ pub fn load(mod_dirs: &[PathBuf], cache: &Path) -> Result<Vec<LoadedMod>, String
         let lib = unsafe { libloading::Library::new(&load_from) }
             .map_err(|e| format!("loading mod {name} from {}: {e}", lib_path.display()))?;
         let entry: libloading::Symbol<unsafe extern "C" fn() -> *const abi::ModDecl> =
-            unsafe { lib.get(abi::ENTRY_SYMBOL) }.map_err(|_| format!("{} is not a Weft mod", lib_path.display()))?;
+            unsafe { lib.get(abi::ENTRY_SYMBOL) }.map_err(|_| format!("{} is not a Loom mod", lib_path.display()))?;
         let decl = unsafe { &*entry() };
         if decl.abi_version != abi::ABI_VERSION {
-            return Err(format!("mod {name} was built against another mod ABI ({:016x}, this engine has {:016x}); rebuild it against the current weft_sdk", decl.abi_version, abi::ABI_VERSION));
+            return Err(format!("mod {name} was built against another mod ABI ({:016x}, this engine has {:016x}); rebuild it against the current loom_sdk", decl.abi_version, abi::ABI_VERSION));
         }
         let id = unsafe { decl.id.as_str() }.to_string();
         if id != name {

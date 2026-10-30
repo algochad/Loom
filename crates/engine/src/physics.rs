@@ -3,7 +3,7 @@
 //! player prediction) and the server (entities), so both agree.
 
 use glam::{DVec3, IVec3};
-use weft_abi::{Model, block_flags as bf};
+use loom_abi::{Model, block_flags as bf};
 
 use crate::content::Content;
 

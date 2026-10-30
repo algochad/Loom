@@ -5,7 +5,7 @@
 //! (`abi::LiquidDesc`, `abi::ReactionDesc`), nothing calls into a mod per update.
 
 use glam::{DVec3, IVec3};
-use weft_abi::{ItemStack, block_flags as bf};
+use loom_abi::{ItemStack, block_flags as bf};
 
 use super::dim::Dim;
 use crate::content::{AIR, Content, LiquidDef};

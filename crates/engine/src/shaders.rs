@@ -9,7 +9,7 @@ use std::sync::OnceLock;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Instant;
 
-use weft_render::{Shader, ShaderError};
+use loom_render::{Shader, ShaderError};
 
 use crate::assets::Assets;
 

@@ -66,7 +66,7 @@ mod.testmod.description = Proves that a mod needs no engine changes.
     {align:center}{img:testmod:icon 32x32}{/align}
     Energy, its own dimensions, a biome in {color:key}another mod's{/} overworld, machines and recipes of its own.
     Its generator burns fuel the way {block:base:furnace} furnaces do, lit up like {block:base:furnace[lit=true]}.
-mod.testmod.authors = Weft developers
+mod.testmod.authors = Loom developers
 command.testmod.morph = now a {0}, {1} x {2}
 command.testmod.unmorph = yourself again
 command.testmod.tagbench = ns per lookup: field {0}, tag {1}, host call {2}, tag by name {3}

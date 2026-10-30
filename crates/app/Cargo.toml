@@ -1,13 +1,13 @@
 [package]
-name = "weft"
+name = "loom"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-weft_engine.workspace = true
-weft_vulkan.workspace = true
-weft_render.workspace = true
+loom_engine.workspace = true
+loom_vulkan.workspace = true
+loom_render.workspace = true
 log.workspace = true
 
 [build-dependencies]

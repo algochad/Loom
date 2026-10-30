@@ -1,4 +1,4 @@
-# Weft modding cheat sheet
+# Loom modding cheat sheet
 
 ## Contents
 1. [Introduction](#introduction)
@@ -44,7 +44,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # you want to replace this path with the one to the SDK after copying this folder somewhere else
-weft_sdk = { path = "../../crates/sdk" }
+loom_sdk = { path = "../../crates/sdk" }
 
 # only while the mod folder lies inside another cargo project (like this repository), see examples/examplemod/Cargo.toml
 [workspace]
@@ -52,7 +52,7 @@ weft_sdk = { path = "../../crates/sdk" }
 
 ```rust
 // lib.rs
-use weft_sdk::*;
+use loom_sdk::*;
 
 declare_mod!(deps: ["base"], init: init);
 
@@ -78,7 +78,7 @@ run/mods/mymod/
         lang/en_us.lang
 ```
 
-`weft --pack-mod run/mods/mymod` makes a `mymod.zip` of the same thing, which is what you can send to anyone.\
+`loom --pack-mod run/mods/mymod` makes a `mymod.zip` of the same thing, which is what you can send to anyone.\
 The folder has to hold the library that's what gets packed.
 
 The mod's id and version come from `Cargo.toml`, and its name from the lang file (`mod.mymod.name`), so `declare_mod!` only lists the mods yours needs.\
@@ -198,7 +198,7 @@ Events and components carry values, and two mods have to agree on their layout. 
 So a mod can publish a small crate with just its types and handles, the way the base game does with `base_api` (`mods/base/api`): the `value!` structs of its events and components, and `Event`, `Component`, `Chain`, `RecipeKind`, `EquipmentSlot`, `Dimension` and tab handles with full names (`base:smelted`, since the statics compile into whoever uses them).
 ```toml
 [dependencies]
-weft_sdk = { path = "../../crates/sdk" }
+loom_sdk = { path = "../../crates/sdk" }
 base_api = { path = "../../mods/base/api" }
 ```
 ```rust
@@ -251,7 +251,7 @@ Anywhere a block is named as text, `base:furnace[lit=true]` picks a state: in st
 - `model(biped(..))` or `model_file("thing")` (Blockbench geo.json)
 - `sound("hurt")`, `sound("death")`, `sound("ambient")`: files from `sounds/entity/<name>/`
 - `animations(..)`
-- `goals(..)` for AI (see `weft_sdk::ai`); `ai::melee(reach)` with `.attack_damage(3.0)` makes it hit like a player does, so `question::ATTACK` and `chain::ATTACK_DAMAGE` (a strength effect, a peaceful zone) work on mobs too
+- `goals(..)` for AI (see `loom_sdk::ai`); `ai::melee(reach)` with `.attack_damage(3.0)` makes it hit like a player does, so `question::ATTACK` and `chain::ATTACK_DAMAGE` (a strength effect, a peaceful zone) work on mobs too
 - `on_tick`: every entity of the kind at once, once per tick
 - `on_hurt(|w, hurt| ..)`, `on_death(|w, death| ..)`: the `ENTITY_HURT` and `ENTITY_DIED` events for this kind. The damage itself is the `chain::DAMAGE` chain and `question::HURT` can stop it, for any kind, yours or not
 - `on_interact`: a player right clicked one (after `question::INTERACT_ENTITY`)

@@ -4,7 +4,7 @@ use std::sync::OnceLock;
 
 use rayon::prelude::*;
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, Callback, Layer, Model, ModId};
+use loom_abi::{self as abi, Callback, Layer, Model, ModId};
 
 use crate::components::{self as comps, Components, RawSet, RawValue, Target};
 

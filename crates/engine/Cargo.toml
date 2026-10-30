@@ -1,13 +1,13 @@
 [package]
-name = "weft_engine"
+name = "loom_engine"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-weft_abi.workspace = true
-weft_noise.workspace = true
-weft_render.workspace = true
+loom_abi.workspace = true
+loom_noise.workspace = true
+loom_render.workspace = true
 winit.workspace = true
 glam.workspace = true
 bytemuck.workspace = true

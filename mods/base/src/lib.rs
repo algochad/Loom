@@ -1,4 +1,4 @@
-//! The base game. It is an ordinary mod: everything here goes through `weft_sdk`, nothing in the
+//! The base game. It is an ordinary mod: everything here goes through `loom_sdk`, nothing in the
 //! engine knows about stone, water or zombies.
 
 mod blocks;
@@ -10,7 +10,7 @@ mod recipes;
 mod sounds;
 mod worldgen;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 pub use base_api::{FLATLANDS, OVERWORLD, tabs};
 

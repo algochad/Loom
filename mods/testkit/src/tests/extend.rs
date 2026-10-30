@@ -51,7 +51,7 @@ pub async fn vetoes_and_timers(t: T) -> R {
     t.cmd("/rule testkit:no_hurt 1").await?;
     t.cmd("/kill").await?;
     t.secs(0.3).await?;
-    t.check(!t.flag(weft_sdk::client::client_flags::DEAD), "question::HURT denied, the player lives");
+    t.check(!t.flag(loom_sdk::client::client_flags::DEAD), "question::HURT denied, the player lives");
     t.cmd("/rule testkit:no_hurt 0").await?;
     t.cmd("/feed 10").await?;
     t.op("put me 1 bread 2").await?;
@@ -105,7 +105,7 @@ pub async fn facing_placement(t: T) -> R {
 /// One naming rule for every kind of thing: a name without a namespace is the declaring mod's,
 /// another mod's is written in full, and both resolve the same way when read.
 pub async fn names(t: T) -> R {
-    use weft_sdk::*;
+    use loom_sdk::*;
     static PROBE: Key = Key::named("probe");
     static OWN_EVENT: Event<u32> = Event::named("marks");
     static COAL: Item = Item::named("base:coal");

@@ -6,21 +6,21 @@ version = 4
 name = "examplemod"
 version = "0.1.0"
 dependencies = [
- "weft_sdk",
+ "loom_sdk",
 ]
 
 [[package]]
-name = "weft_abi"
+name = "loom_abi"
 version = "0.1.0"
 
 [[package]]
-name = "weft_noise"
+name = "loom_noise"
 version = "0.1.0"
 
 [[package]]
-name = "weft_sdk"
+name = "loom_sdk"
 version = "0.1.0"
 dependencies = [
- "weft_abi",
- "weft_noise",
+ "loom_abi",
+ "loom_noise",
 ]

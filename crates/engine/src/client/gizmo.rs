@@ -127,13 +127,13 @@ impl Gizmos {
                     for dx in -6..=6 {
                         let p = feet + IVec3::new(dx, dy, dz);
                         let (Some(below), Some(here)) = (client.world.block_or_air(p - IVec3::Y), client.world.block_or_air(p)) else { continue };
-                        let solid = |s: u32| c.states[s as usize].flags & weft_abi::block_flags::SOLID != 0;
+                        let solid = |s: u32| c.states[s as usize].flags & loom_abi::block_flags::SOLID != 0;
                         if !solid(below) || solid(here) {
                             continue;
                         }
                         let l = client.world.light(p);
-                        let block = weft_abi::light::block(l).min(15);
-                        let now = weft_abi::light::effective(l, day);
+                        let block = loom_abi::light::block(l).min(15);
+                        let now = loom_abi::light::effective(l, day);
                         let color = if spawns(now) {
                             0xFF5040FF
                         } else if spawns(block) {
@@ -153,9 +153,9 @@ impl Gizmos {
 /// What a server's or a mod's shape draws.
 pub fn shape(s: &GizmoShape, lines: &mut Vec<Line>, fills: &mut Vec<Fill>, labels: &mut Vec<Label>) {
     match s.kind as u32 {
-        weft_abi::gizmo_kind::LINE => lines.push((s.a, s.b, s.color)),
-        weft_abi::gizmo_kind::BOX => cuboid(lines, s.a.min(s.b), s.a.max(s.b), s.color),
-        weft_abi::gizmo_kind::FILL => fills.push((s.a.min(s.b), s.a.max(s.b), s.color)),
+        loom_abi::gizmo_kind::LINE => lines.push((s.a, s.b, s.color)),
+        loom_abi::gizmo_kind::BOX => cuboid(lines, s.a.min(s.b), s.a.max(s.b), s.color),
+        loom_abi::gizmo_kind::FILL => fills.push((s.a.min(s.b), s.a.max(s.b), s.color)),
         _ => labels.push((s.a, s.text.clone(), s.color, if s.b.x > 0.0 { s.b.x as f32 } else { 1.0 })),
     }
 }

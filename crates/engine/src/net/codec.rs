@@ -7,7 +7,7 @@ use crate::ui::text::{Arg, Msg};
 use std::sync::Arc;
 
 use glam::{DVec3, IVec3};
-use weft_abi::{ItemStack, ParticleBurst};
+use loom_abi::{ItemStack, ParticleBurst};
 
 use super::{ToClient, ToServer};
 use crate::world::{Cube, GameMode};

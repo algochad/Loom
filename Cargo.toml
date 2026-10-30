@@ -9,12 +9,12 @@ license = "MPL-2.0"
 rust-version = "1.90"
 
 [workspace.dependencies]
-weft_abi = { path = "crates/abi" }
-weft_sdk = { path = "crates/sdk" }
-weft_noise = { path = "crates/noise" }
-weft_render = { path = "crates/render" }
-weft_engine = { path = "crates/engine" }
-weft_vulkan = { path = "backends/vulkan" }
+loom_abi = { path = "crates/abi" }
+loom_sdk = { path = "crates/sdk" }
+loom_noise = { path = "crates/noise" }
+loom_render = { path = "crates/render" }
+loom_engine = { path = "crates/engine" }
+loom_vulkan = { path = "backends/vulkan" }
 base_api = { path = "mods/base/api" }
 
 ash = "0.38"

@@ -326,12 +326,12 @@ pub fn composite_texture(parts: [&LoadedTexture; 4]) -> LoadedTexture {
 /// Fingerprint of the files a texture is made of (image, `.anim`, glow masks): changes when any of
 /// them is edited, added or removed, so a reload reads only what changed.
 pub fn texture_stamp(assets: &Assets, name: &str) -> u64 {
-    let mut h = weft_noise::FNV;
+    let mut h = loom_noise::FNV;
     for (n, ext) in [(name.to_string(), "png"), (name.to_string(), "anim"), (format!("{name}_e"), "png"), (format!("{name}_s"), "png")] {
         let meta = assets.path(&n, "textures", ext).and_then(|p| std::fs::metadata(p).ok());
         let (len, time) = meta.map_or((u64::MAX, 0), |m| (m.len(), m.modified().ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok()).map_or(0, |d| d.as_nanos() as u64)));
         for v in [len, time] {
-            h = weft_noise::fnv_step(h, v);
+            h = loom_noise::fnv_step(h, v);
         }
     }
     h

@@ -6,7 +6,7 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use super::{add, at};
 use crate::runner::{self, R, T};

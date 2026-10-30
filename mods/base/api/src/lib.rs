@@ -5,7 +5,7 @@
 //!
 //! Names here are full (`base:..`): the statics compile into whichever mod uses them.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 value! {
     /// Fired when a furnace finishes one item.
@@ -59,7 +59,7 @@ pub static FLATLANDS: Dimension = Dimension::named("base:flatlands");
 
 /// Vanilla's creative tabs.
 pub mod tabs {
-    use weft_sdk::CreativeTab;
+    use loom_sdk::CreativeTab;
     pub static BUILDING: CreativeTab = CreativeTab::named("base:building");
     pub static COLORED: CreativeTab = CreativeTab::named("base:colored");
     pub static NATURAL: CreativeTab = CreativeTab::named("base:natural");

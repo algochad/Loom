@@ -146,7 +146,7 @@ impl ClientWorld {
             removed: Vec::new(),
             next_version: 0,
             next_rev: 0,
-            filler: content().states.iter().position(|s| s.flags & weft_abi::block_flags::OPAQUE != 0).unwrap_or(0) as u32,
+            filler: content().states.iter().position(|s| s.flags & loom_abi::block_flags::OPAQUE != 0).unwrap_or(0) as u32,
             columns: FxHashMap::default(),
             tints_dirty: FxHashSet::default(),
             bounded: false,

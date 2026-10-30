@@ -217,7 +217,7 @@ impl Lod {
 
     /// Picks, asks for and hands the renderer this frame's tiles. `view`: the view radius in
     /// cubes (inside it the real cubes are drawn).
-    pub fn update(&mut self, gpu: &mut dyn weft_render::Backend, render: &mut super::world_render::WorldRenderer, world: &mut super::world::ClientWorld, textures: &super::textures::GameTextures, seed: u64, cam: DVec3, view: i32) {
+    pub fn update(&mut self, gpu: &mut dyn loom_render::Backend, render: &mut super::world_render::WorldRenderer, world: &mut super::world::ClientWorld, textures: &super::textures::GameTextures, seed: u64, cam: DVec3, view: i32) {
         let c = content();
         let dim = world.dim;
         self.update_mask(gpu, render, world, cam, view);
@@ -290,7 +290,7 @@ impl Lod {
 
     /// Keeps the mask of columns shown by cubes current: columns that changed, and the ones
     /// coming into the window when the camera moved to another column.
-    fn update_mask(&mut self, gpu: &mut dyn weft_render::Backend, render: &mut super::world_render::WorldRenderer, world: &mut super::world::ClientWorld, cam: DVec3, view: i32) {
+    fn update_mask(&mut self, gpu: &mut dyn loom_render::Backend, render: &mut super::world_render::WorldRenderer, world: &mut super::world::ClientWorld, cam: DVec3, view: i32) {
         let half = view + MASK_MARGIN;
         let w = 2 * half + 1;
         let center = IVec2::new((cam.x / 16.0).floor() as i32, (cam.z / 16.0).floor() as i32);
@@ -396,7 +396,7 @@ impl Lod {
 /// Heights of the mod features `custom` at the tile's columns, for its job.
 fn custom_heights(c: &Content, dim: u32, seed: u64, key: TileKey, custom: &[usize]) -> Vec<i32> {
     let Some(t) = c.dims[dim as usize].terrain.as_ref() else { return Vec::new() };
-    let f = weft_noise::fixed::Fields { seed };
+    let f = loom_noise::fixed::Fields { seed };
     let (o, s) = (key.origin(), 1 << key.level);
     let mut out = Vec::with_capacity(custom.len() * SAMPLES);
     for &i in custom {

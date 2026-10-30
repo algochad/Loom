@@ -7,7 +7,7 @@ use std::mem::ManuallyDrop;
 use ash::{ext, khr, vk};
 use gpu_allocator::MemoryLocation;
 use gpu_allocator::vulkan::{Allocation, AllocationCreateDesc, AllocationScheme, Allocator, AllocatorCreateDesc};
-use weft_render::*;
+use loom_render::*;
 
 const FRAMES: usize = 2;
 /// Timestamp queries per frame: start, after uploads, marks, end.
@@ -205,8 +205,8 @@ impl VulkanBackend {
             }
 
             let app = vk::ApplicationInfo::default()
-                .application_name(c"Weft")
-                .engine_name(c"Weft")
+                .application_name(c"Loom")
+                .engine_name(c"Loom")
                 .api_version(vk::API_VERSION_1_3);
             let instance = entry
                 .create_instance(

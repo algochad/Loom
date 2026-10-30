@@ -137,7 +137,7 @@ pub fn create(saves: &Path, name: &str, seed: u64) -> WorldMeta {
 pub fn parse_seed(s: &str) -> u64 {
     let s = s.trim();
     if s.is_empty() {
-        return weft_noise::mix(now_secs() ^ (std::process::id() as u64) << 32);
+        return loom_noise::mix(now_secs() ^ (std::process::id() as u64) << 32);
     }
     s.parse::<i64>().map(|v| v as u64).unwrap_or_else(|_| crate::world::mix(s.bytes().fold(0u64, |h, b| h.wrapping_mul(31).wrapping_add(b as u64))))
 }

@@ -1,8 +1,8 @@
 //! Sound events: block groups (`block.<group>.break|place|step|hit`) blocks pick with
 //! `.sound_group(group)`, and the background music; mobs' voices come with them (`mobs.rs`). Files are in `assets/sounds/`.
 
-use weft_sdk::abi::music_when as mw;
-use weft_sdk::*;
+use loom_sdk::abi::music_when as mw;
+use loom_sdk::*;
 
 pub fn register(r: &mut Registry) {
     for g in ["stone", "wood", "gravel", "grass", "sand", "glass", "cloth"] {

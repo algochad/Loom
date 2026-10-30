@@ -7,7 +7,7 @@
 use glam::{DVec3, IVec3, Mat4, Vec3, Vec4};
 use rayon::prelude::*;
 use rustc_hash::FxHashMap;
-use weft_render::*;
+use loom_render::*;
 
 use super::mesher::Mesh;
 use super::textures::GameTextures;
@@ -327,7 +327,7 @@ pub fn world_shader(assets: &crate::assets::Assets) -> Result<(Shader, crate::sh
 /// Block shader slot per texture id: a block's `shader` goes with its textures.
 fn shader_table(gpu: &mut dyn Backend, c: &Content, textures: &GameTextures, slots: &crate::shaders::Slots) -> BufferId {
     let mut table = vec![0u32; textures.count().max(1)];
-    if let Some(comp) = c.components.id(weft_abi::comp::SHADER) {
+    if let Some(comp) = c.components.id(loom_abi::comp::SHADER) {
         for (i, s) in c.states.iter().enumerate() {
             let Some(name) = c.components.text(crate::components::BLOCK, i as u32, comp) else { continue };
             let slot = slots.slot(name);

@@ -147,7 +147,7 @@ impl Screen for Death {
     /// Built from node descriptors like a mod's screen, so a replacement can match it.
     fn build(&mut self, ui: &mut Ui, cx: &BuildCx) {
         use crate::ui::desc;
-        use weft_abi as abi;
+        use loom_abi as abi;
         desc::build(ui, cx, |d| {
             let panel = abi::UiNode { class: abi::Str::new("death"), grow: 1.0, align: abi::ui_align::CENTER, justify: abi::ui_justify::CENTER, gap: 12.0, ..desc::node(abi::ui_kind::PANEL) };
             d.open(&panel, |d| {
@@ -531,7 +531,7 @@ fn recipe_entry(ui: &mut Ui, cx: &BuildCx, kind: &str, index: usize) {
             recipe_grid(ui, cx.lang, cx.input, kind, r, false);
             ui.container(Style::default().gap(1.0).center(), |ui| {
                 let [w, h] = crate::ui::RECIPE_ARROW;
-                ui.add(Kind::Progress { class: "arrow".into(), bind: Box::new(|_: &Ctx| 0.0), value: 0.0, dir: weft_abi::ui_dir::RIGHT }, Style::default().size(w, h));
+                ui.add(Kind::Progress { class: "arrow".into(), bind: Box::new(|_: &Ctx| 0.0), value: 0.0, dir: loom_abi::ui_dir::RIGHT }, Style::default().size(w, h));
                 if r.time > 0 && def.is_none_or(|d| d.info.is_none()) {
                     label(ui, cx, "recipes.time", &[text::Arg::Float(r.time as f64 / crate::world::TPS as f64, 1)], "dim");
                 }
@@ -661,7 +661,7 @@ pub fn recipe_slot(ui: &mut Ui, lang: &crate::ui::lang::Lang, input: &crate::inp
             });
             tip = match tag {
                 Some(t) => fmt("recipes.tag", &[text::Arg::Text(c.components.names[t as usize].clone())]),
-                None => crate::hud::item_tooltip(lang, input, weft_abi::ItemStack::new(items[0], count.max(1))),
+                None => crate::hud::item_tooltip(lang, input, loom_abi::ItemStack::new(items[0], count.max(1))),
             };
             b
         }

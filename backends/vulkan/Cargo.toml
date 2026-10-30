@@ -1,11 +1,11 @@
 [package]
-name = "weft_vulkan"
+name = "loom_vulkan"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-weft_render.workspace = true
+loom_render.workspace = true
 ash.workspace = true
 ash-window.workspace = true
 gpu-allocator.workspace = true

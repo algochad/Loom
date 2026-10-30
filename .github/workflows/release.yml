@@ -52,13 +52,13 @@ jobs:
       - name: Make the distribution
         shell: pwsh
         run: |
-          target/release/weft.exe --dist dist/Weft
-          if (-not (Test-Path dist/Weft/weft.exe)) { throw "no distribution made" }
-          Compress-Archive -Path dist/Weft -DestinationPath "Weft-$env:TAG-windows-x64.zip"
+          target/release/loom.exe --dist dist/Loom
+          if (-not (Test-Path dist/Loom/loom.exe)) { throw "no distribution made" }
+          Compress-Archive -Path dist/Loom -DestinationPath "Loom-$env:TAG-windows-x64.zip"
 
       - name: Publish
         shell: bash
         run: |
-          gh release create "$TAG" "Weft-$TAG-windows-x64.zip" \
-            --verify-tag --title "Weft ${TAG#v}" \
+          gh release create "$TAG" "Loom-$TAG-windows-x64.zip" \
+            --verify-tag --title "Loom ${TAG#v}" \
             --notes-file notes/.github/release-notes.md --generate-notes

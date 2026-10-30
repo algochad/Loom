@@ -334,7 +334,7 @@ pub fn load(assets: &Assets, c: &Content) -> (Ctm, Extra) {
 }
 
 fn hash(x: i32, y: i32, z: i32, f: u32) -> u64 {
-    weft_noise::hash(f as u64, x as i64, y as i64, z as i64)
+    loom_noise::hash(f as u64, x as i64, y as i64, z as i64)
 }
 
 impl Ctm {
@@ -386,7 +386,7 @@ impl Ctm {
                 // With inner seams a neighbor whose own face here is covered breaks the run.
                 same && !(rule.inner_seams && {
                     let front = n.states[at(a, b, nrm)];
-                    front != 0 && c.states[front as usize].flags & weft_abi::block_flags::OPAQUE != 0
+                    front != 0 && c.states[front as usize].flags & loom_abi::block_flags::OPAQUE != 0
                 })
             };
             let tile = match rule.method {

@@ -57,7 +57,7 @@ pub struct Audio {
     state: (bool, bool),
     /// Per category, then the master volume.
     volumes: Vec<f64>,
-    rng: weft_noise::Rng,
+    rng: loom_noise::Rng,
     /// Sounds started so far.
     pub played: u32,
     /// Automated runs (tests, scripts): everything plays and counts, silently.
@@ -109,7 +109,7 @@ impl Audio {
                 next_music: Instant::now() + Duration::from_secs(20),
                 state: (false, false),
                 volumes: Vec::new(),
-                rng: weft_noise::Rng(0x2545_F491_4F6C_DD1D),
+                rng: loom_noise::Rng(0x2545_F491_4F6C_DD1D),
                 played: 0,
                 muted: false,
                 volume_ids: None,
@@ -195,7 +195,7 @@ impl Audio {
     }
 
     fn music(&mut self, assets: &Assets, l: &Listener) {
-        use weft_abi::music_when as mw;
+        use loom_abi::music_when as mw;
         if self.music.as_ref().is_some_and(|m| m.state() != kira::sound::PlaybackState::Stopped) || Instant::now() < self.next_music {
             return;
         }

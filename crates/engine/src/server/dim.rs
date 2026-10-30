@@ -6,7 +6,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use glam::{DVec3, IVec3};
 use rayon::prelude::*;
 use rustc_hash::{FxHashMap, FxHashSet};
-use weft_abi::{self as abi, ItemStack, block_flags as bf, damage, entity_flags as ef};
+use loom_abi::{self as abi, ItemStack, block_flags as bf, damage, entity_flags as ef};
 
 use super::entity::{Entities, Entity, step};
 use crate::components as comps;
@@ -179,7 +179,7 @@ pub fn finish_generated(c: &Content, dim: u32, seed: u64, pos: IVec3, mut blocks
     cube
 }
 
-use weft_noise::hash;
+use loom_noise::hash;
 
 /// Veins start in this and the 26 neighboring cubes and wander a block per step, so the result
 /// does not depend on which cube is generated first.
@@ -228,7 +228,7 @@ fn place_ores(c: &Content, def: &crate::content::DimensionDef, seed: u64, pos: I
 /// corner. Depends only on the seed and the dimension's columns, so every cube agrees.
 pub fn structure_in(def: &crate::content::DimensionDef, c: &Content, s: &crate::content::StructureDef, seed: u64, cell: (i32, i32)) -> Option<IVec3> {
     let h = hash(seed ^ s.salt, cell.0 as i64, 7, cell.1 as i64);
-    if weft_noise::unit(h) >= s.chance as f64 {
+    if loom_noise::unit(h) >= s.chance as f64 {
         return None;
     }
     let room = (s.spacing - s.extent.x.max(s.extent.z)).max(1) as u64;
@@ -250,7 +250,7 @@ pub fn scatter_site(def: &crate::content::DimensionDef, c: &Content, s: &crate::
         return None;
     }
     let density = s.density.and_then(|d| c.components.get::<f32>(comps::BIOME, col.biome, d)).unwrap_or(0.0);
-    if weft_noise::unit(h.rotate_left(17)) >= density as f64 || def.carved(seed, x, z) {
+    if loom_noise::unit(h.rotate_left(17)) >= density as f64 || def.carved(seed, x, z) {
         return None;
     }
     Some((IVec3::new(x, col.height + 1, z), col.biome, hash(h, 1, 2, 3)))
@@ -441,7 +441,7 @@ impl Dim {
             seed,
             cubes: FxHashMap::default(),
             time: 1000,
-            rng: Rng(weft_noise::mix(seed ^ id as u64)),
+            rng: Rng(loom_noise::mix(seed ^ id as u64)),
             scheduled: BinaryHeap::new(),
             growth: FxHashMap::default(),
             growth_queue: BinaryHeap::new(),

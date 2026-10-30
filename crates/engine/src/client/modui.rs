@@ -3,7 +3,7 @@
 
 use std::rc::Rc;
 
-use weft_abi::{self as abi, Callback, ModId, Str, ui_kind as uk};
+use loom_abi::{self as abi, Callback, ModId, Str, ui_kind as uk};
 
 use super::Client;
 use crate::app::Ctx;

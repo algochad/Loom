@@ -5,8 +5,8 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use glam::Vec2;
-use weft_abi as abi;
-use weft_render::{Backend, BackendDesc, Cmd, CommandList, Format, Target, TextureDesc, TextureId};
+use loom_abi as abi;
+use loom_render::{Backend, BackendDesc, Cmd, CommandList, Format, Target, TextureDesc, TextureId};
 use winit::application::ApplicationHandler;
 use winit::event::{DeviceEvent, DeviceId, ElementState, MouseButton, MouseScrollDelta, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
@@ -31,7 +31,7 @@ use crate::ui::text::{self, Arg, Msg};
 use crate::ui::look::Look;
 use crate::ui::{Kind, Ui};
 
-pub type BackendFactory = fn(&BackendDesc) -> Result<Box<dyn Backend>, weft_render::Error>;
+pub type BackendFactory = fn(&BackendDesc) -> Result<Box<dyn Backend>, loom_render::Error>;
 
 #[derive(Clone, Debug)]
 pub struct Options {
@@ -58,11 +58,11 @@ pub enum Request {
     Screen(String),
     /// A mod's button was clicked: its callback (`UiArgs`) runs with the whole client API, like
     /// a frame hook, after the input is handled.
-    ModCall(weft_abi::ModId, weft_abi::Callback),
+    ModCall(loom_abi::ModId, loom_abi::Callback),
     /// A mod's input or slider changed: its `on_change` with the text or value.
-    ModChange(weft_abi::ModId, weft_abi::Callback, String, f32),
+    ModChange(loom_abi::ModId, loom_abi::Callback, String, f32),
     /// A key for a mod's screen (`on_key`), by its settings name.
-    ModKey(weft_abi::ModId, weft_abi::Callback, String),
+    ModKey(loom_abi::ModId, loom_abi::Callback, String),
     Close,
     Quit,
     Rebuild,
@@ -317,7 +317,7 @@ impl App {
         let mut settings = Settings::new(&self.opts.run_dir);
         let icon = crate::assets::decode_png_file(&engine_assets(self.opts.dev).join("icon.png")).and_then(|(w, h, px)| winit::window::Icon::from_rgba(px, w, h).ok());
         let mut attrs = Window::default_attributes()
-            .with_title("Weft")
+            .with_title("Loom")
             .with_window_icon(icon)
             .with_inner_size(winit::dpi::PhysicalSize::new(self.opts.size.0, self.opts.size.1));
         // Automated runs work in the background: no focus taken, under other windows, off the
@@ -636,17 +636,17 @@ impl Running {
                 Request::Rebuild => self.rebuild_all(),
                 Request::ModCall(owner, cb) => {
                     let mut v = self.frame_view();
-                    let mut a = weft_abi::UiArgs { ui: std::ptr::null_mut(), client: v.raw() };
+                    let mut a = loom_abi::UiArgs { ui: std::ptr::null_mut(), client: v.raw() };
                     crate::host::invoke(owner, cb, &mut a);
                 }
                 Request::ModChange(owner, cb, text, value) => {
                     let mut v = self.frame_view();
-                    let mut a = weft_abi::UiChangeArgs { client: v.raw(), text: weft_abi::Str::new(&text), value };
+                    let mut a = loom_abi::UiChangeArgs { client: v.raw(), text: loom_abi::Str::new(&text), value };
                     crate::host::invoke(owner, cb, &mut a);
                 }
                 Request::ModKey(owner, cb, key) => {
                     let mut v = self.frame_view();
-                    let mut a = weft_abi::ScreenKeyArgs { client: v.raw(), key: weft_abi::Str::new(&key) };
+                    let mut a = loom_abi::ScreenKeyArgs { client: v.raw(), key: loom_abi::Str::new(&key) };
                     crate::host::invoke(owner, cb, &mut a);
                 }
                 Request::Screen(name) => match screens::named(&name) {
@@ -831,7 +831,7 @@ impl Running {
                 if let Some(h) = hovered {
                     if let Kind::Custom { tag, data } = ui.nodes[h].kind {
                         let stack = if tag == crate::client::modui::TAG_CREATIVE {
-                            weft_abi::ItemStack::new(data as u32, 1)
+                            loom_abi::ItemStack::new(data as u32, 1)
                         } else {
                             g.client.menu.as_ref().and_then(|m| m.slots.get(data as usize)).copied().unwrap_or_default()
                         };

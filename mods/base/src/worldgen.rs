@@ -1,12 +1,12 @@
 //! Base's worldgen as data: biomes, the overworld's terrain, ores, trees (a scatter the engine
 //! places in every dimension whose biomes ask for them) and plants (a decoration).
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use crate::blocks::*;
 
-use weft_sdk::noise::*;
-use weft_sdk::terrain::*;
+use loom_sdk::noise::*;
+use loom_sdk::terrain::*;
 
 pub const SEA: i32 = 63;
 

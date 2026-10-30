@@ -3,7 +3,7 @@
 
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use super::{add, probe};
 use crate::runner::{R, Shot, T};
@@ -404,7 +404,7 @@ pub async fn multiplayer(t: T) -> R {
     let script = format!("{dir}/join.txt");
     std::fs::write(&ticket, t.c().ticket()).map_err(|e| e.to_string())?;
     std::fs::write(&script, format!("join {ticket}\nloaded\nchat hello from the second player\nwait 3\nsay_config testmod:wisp_sparks\nwait 1\nquit\n")).map_err(|e| e.to_string())?;
-    static SPARKS: weft_sdk::Config<i32> = weft_sdk::Config::named("testmod:wisp_sparks");
+    static SPARKS: loom_sdk::Config<i32> = loom_sdk::Config::named("testmod:wisp_sparks");
     let sparks = SPARKS.get();
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let mut child = std::process::Command::new(exe)
@@ -462,7 +462,7 @@ pub async fn client_hooks(t: T) -> R {
     let f = t.feet();
     let b = [f[0] as f64 + 2.0, f[1] as f64, f[2] as f64 - 4.0];
     t.c().look(0.0, -10.0);
-    static DRAWN: weft_sdk::GizmoGroup = weft_sdk::GizmoGroup::named("drawn");
+    static DRAWN: loom_sdk::GizmoGroup = loom_sdk::GizmoGroup::named("drawn");
     let green = |shot: &crate::runner::Shot| shot.share(0.0, 0.0, 1.0, 0.9, |c| c[1] > 200 && c[0] < 80 && c[2] < 80);
     for _ in 0..3 {
         t.c().draw_fill(Some(&DRAWN), [b[0] - 3.0, b[1], b[2]], [b[0] - 2.0, b[1] + 1.0, b[2] + 1.0], 0x20FF20FF);

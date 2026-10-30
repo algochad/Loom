@@ -1,4 +1,4 @@
-use weft_sdk::*;
+use loom_sdk::*;
 
 use crate::items::{FLAMMABLE, FUEL};
 use crate::worldgen;

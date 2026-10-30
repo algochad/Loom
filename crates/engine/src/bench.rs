@@ -41,8 +41,8 @@ impl Bench {
         }
     }
 
-    pub fn sample(&mut self, frame_ms: f32, cpu: &[f32; 5], gpu: &[f32], server_ms: f32, phases: [f32; 6], list: &weft_render::CommandList) {
-        use weft_render::Cmd;
+    pub fn sample(&mut self, frame_ms: f32, cpu: &[f32; 5], gpu: &[f32], server_ms: f32, phases: [f32; 6], list: &loom_render::CommandList) {
+        use loom_render::Cmd;
         for c in &list.cmds {
             let draws = match *c {
                 Cmd::Draw { .. } | Cmd::DrawIndirectCount { .. } => 1,

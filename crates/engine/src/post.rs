@@ -2,7 +2,7 @@
 //! one pipeline. With none on, the world is drawn straight to the screen; with some,
 //! it goes into an image the effects read one after another, the last one onto the screen.
 
-use weft_render::*;
+use loom_render::*;
 
 use crate::assets::Assets;
 use crate::shaders::{Hook, Slots};

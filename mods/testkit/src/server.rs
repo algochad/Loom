@@ -3,8 +3,8 @@
 
 use std::sync::atomic::{AtomicU32, Ordering};
 
-use weft_sdk::abi::entry_kind as ek;
-use weft_sdk::*;
+use loom_sdk::abi::entry_kind as ek;
+use loom_sdk::*;
 
 /// How many of each event arrived since `events reset`, in `EVENT_NAMES` order.
 static COUNTS: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];

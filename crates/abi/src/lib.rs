@@ -13,7 +13,7 @@ use core::sync::atomic::AtomicU32;
 /// to load instead of reading the wrong memory.
 pub const ABI_VERSION: u64 = fnv(include_str!("lib.rs").as_bytes());
 /// Symbol every mod library exports: `extern "C" fn() -> *const ModDecl`.
-pub const ENTRY_SYMBOL: &[u8] = b"weft_mod\0";
+pub const ENTRY_SYMBOL: &[u8] = b"loom_mod\0";
 
 const fn fnv(bytes: &[u8]) -> u64 {
     let mut h: u64 = 0xcbf2_9ce4_8422_2325;
@@ -2897,7 +2897,7 @@ pub mod terrain_mask {
     pub const NOT: u32 = 5;
 }
 
-/// The engine's terrain presets; `params` in the order of `weft_noise::shape`.
+/// The engine's terrain presets; `params` in the order of `loom_noise::shape`.
 pub mod terrain_preset {
     /// `height` is a callback (`FeatureArgs`).
     pub const CUSTOM: u32 = 0;
@@ -2926,7 +2926,7 @@ pub struct FeatureDesc {
 }
 defaults!(FeatureDesc { name: Str::EMPTY, preset: 0, params: [0.0; 4], height: Callback::NONE, mask: Slice::EMPTY });
 
-/// Positions and the height in 1/16 block: terrain is integers only (`weft_noise::fixed`).
+/// Positions and the height in 1/16 block: terrain is integers only (`loom_noise::fixed`).
 #[repr(C)]
 pub struct FeatureArgs {
     pub seed: u64,

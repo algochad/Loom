@@ -4,7 +4,7 @@
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, Callback, ModId, entity_flags as ef};
+use loom_abi::{self as abi, Callback, ModId, entity_flags as ef};
 
 use crate::components::{self as comps, Components, RawSet, RawValue};
 
@@ -83,7 +83,7 @@ pub struct Part {
     pub cuboids: Vec<Cuboid>,
     pub rest: [f32; 3],
     /// Free-form triangles: model pixels (absolute, not pivot relative) and texels.
-    pub mesh: Vec<weft_abi::MeshVertex>,
+    pub mesh: Vec<loom_abi::MeshVertex>,
 }
 
 pub struct EntityKind {
@@ -174,7 +174,7 @@ pub struct GroupDef {
 impl GroupDef {
     /// (owner inventory start, slot count, columns); the player's presets follow `layout`.
     pub fn span(&self, layout: &PlayerLayout) -> (u32, u32, u32) {
-        use weft_abi::slot_owner as so;
+        use loom_abi::slot_owner as so;
         match self.owner {
             so::PLAYER_MAIN => (layout.hotbar, layout.slots - layout.hotbar - layout.worn.len() as u32, layout.hotbar.max(1)),
             so::PLAYER_HOTBAR => (0, layout.hotbar, layout.hotbar.max(1)),
@@ -185,7 +185,7 @@ impl GroupDef {
     /// Owner inventory index of the group's `i`-th slot (the main inventory skips worn slots).
     pub fn index(&self, layout: &PlayerLayout, i: u32) -> u32 {
         let (start, _, _) = self.span(layout);
-        if self.owner == weft_abi::slot_owner::PLAYER_MAIN {
+        if self.owner == loom_abi::slot_owner::PLAYER_MAIN {
             (start..layout.slots).filter(|s| !layout.worn.contains(s)).nth(i as usize).unwrap_or(u32::MAX)
         } else {
             start + i
@@ -264,10 +264,10 @@ pub struct RecipeOutput {
 
 impl Recipe {
     /// The main result as an item stack (empty when it is a fluid).
-    pub fn result(&self) -> weft_abi::ItemStack {
+    pub fn result(&self) -> loom_abi::ItemStack {
         match self.outputs.first() {
-            Some(RecipeOutput { what: Ingredient::Item(i), count, .. }) => weft_abi::ItemStack::new(*i, *count),
-            _ => weft_abi::ItemStack::EMPTY,
+            Some(RecipeOutput { what: Ingredient::Item(i), count, .. }) => loom_abi::ItemStack::new(*i, *count),
+            _ => loom_abi::ItemStack::EMPTY,
         }
     }
 
@@ -515,7 +515,7 @@ pub struct RawGame {
     pub packets: Vec<(ModId, String, String, u32, Callback)>,
     pub keys: Vec<(String, String)>,
     /// (block name, flow rules).
-    pub liquids: Vec<(String, weft_abi::LiquidDesc)>,
+    pub liquids: Vec<(String, loom_abi::LiquidDesc)>,
     /// liquid, touching, source result, flowing result, falls-into result.
     pub reactions: Vec<[String; 5]>,
     /// (owner, event, schema, handler).
@@ -641,16 +641,16 @@ pub const EQUIPMENT_GROUP: &str = "core:equipment";
 
 impl Default for PlayerLayout {
     fn default() -> Self {
-        PlayerLayout::new(&[("hotbar".into(), 9, 1, weft_abi::slot_flags::HOTBAR), ("main".into(), 9, 3, 0)], Vec::new())
+        PlayerLayout::new(&[("hotbar".into(), 9, 1, loom_abi::slot_flags::HOTBAR), ("main".into(), 9, 3, 0)], Vec::new())
     }
 }
 
 impl PlayerLayout {
     /// The hotbar group first, then the other groups in order, then the equipment slots.
     pub fn new(groups: &[(String, u32, u32, u32)], equipment: Vec<EquipmentSlot>) -> PlayerLayout {
-        let mut ordered: Vec<&(String, u32, u32, u32)> = groups.iter().filter(|g| g.3 & weft_abi::slot_flags::HOTBAR != 0).take(1).collect();
-        ordered.extend(groups.iter().filter(|g| g.3 & weft_abi::slot_flags::HOTBAR == 0));
-        let hotbar = ordered.first().filter(|g| g.3 & weft_abi::slot_flags::HOTBAR != 0).map_or(0, |g| g.1 * g.2);
+        let mut ordered: Vec<&(String, u32, u32, u32)> = groups.iter().filter(|g| g.3 & loom_abi::slot_flags::HOTBAR != 0).take(1).collect();
+        ordered.extend(groups.iter().filter(|g| g.3 & loom_abi::slot_flags::HOTBAR == 0));
+        let hotbar = ordered.first().filter(|g| g.3 & loom_abi::slot_flags::HOTBAR != 0).map_or(0, |g| g.1 * g.2);
         let mut at = 0;
         let mut out = Vec::new();
         for (name, cols, rows, _) in ordered {
@@ -734,7 +734,7 @@ pub const ENGINE_EVENTS: &[(&str, &str, u32)] = {
 
 /// FNV-1a, for names stored in saves.
 pub fn name_hash(s: &str) -> u64 {
-    weft_noise::fnv(s.as_bytes())
+    loom_noise::fnv(s.as_bytes())
 }
 
 pub struct RawOre {
@@ -866,7 +866,7 @@ pub(crate) unsafe fn copy_menu(owner: ModId, d: &abi::MenuDesc) -> (usize, MenuD
             MenuDef {
                 name: d.name.as_str().to_string(),
                 owner,
-                temp_slots: groups.iter().filter(|g| g.owner == weft_abi::slot_owner::MENU).map(|g| g.start + g.cols * g.rows).max().unwrap_or(0),
+                temp_slots: groups.iter().filter(|g| g.owner == loom_abi::slot_owner::MENU).map(|g| g.start + g.cols * g.rows).max().unwrap_or(0),
                 groups,
                 entity: d.entity.as_str().to_string(),
                 recipes: d.recipes.as_str().split_whitespace().map(str::to_string).collect(),
@@ -1259,34 +1259,34 @@ pub fn freeze(
 
     // Entity storage, indexed by component id like everything else.
     g.components = c.names.iter().map(|n| ComponentDef { name: n.clone(), ..Default::default() }).collect();
-    let energy = size_of::<weft_abi::Energy>() as u32;
+    let energy = size_of::<loom_abi::Energy>() as u32;
     components.push(RawComponent {
         owner: ENGINE,
-        def: ComponentDef { name: abi::comp::ENERGY.into(), size: energy, flags: weft_abi::component_flags::SAVE | weft_abi::component_flags::SYNC_MENU, default: vec![0; energy as usize], runtime: true },
+        def: ComponentDef { name: abi::comp::ENERGY.into(), size: energy, flags: loom_abi::component_flags::SAVE | loom_abi::component_flags::SYNC_MENU, default: vec![0; energy as usize], runtime: true },
         schema: String::new(),
     });
     // Variable length (size 0): attribute modifiers, added on demand.
     components.push(RawComponent {
         owner: ENGINE,
-        def: ComponentDef { name: MODIFIERS.into(), size: 0, flags: weft_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
+        def: ComponentDef { name: MODIFIERS.into(), size: 0, flags: loom_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
         schema: String::new(),
     });
     components.push(RawComponent {
         owner: ENGINE,
-        def: ComponentDef { name: TIMERS.into(), size: 0, flags: weft_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
+        def: ComponentDef { name: TIMERS.into(), size: 0, flags: loom_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
         schema: String::new(),
     });
     // A block entity's own name (a renamed chest).
     components.push(RawComponent {
         owner: ENGINE,
-        def: ComponentDef { name: abi::comp::NAME.into(), size: 0, flags: weft_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
+        def: ComponentDef { name: abi::comp::NAME.into(), size: 0, flags: loom_abi::component_flags::SAVE, default: Vec::new(), runtime: true },
         schema: String::new(),
     });
-    let shown = weft_abi::component_flags::SYNC_WATCHERS;
-    let own = weft_abi::component_flags::SYNC_OWNER | shown;
+    let shown = loom_abi::component_flags::SYNC_WATCHERS;
+    let own = loom_abi::component_flags::SYNC_OWNER | shown;
     let mut shape = vec![0u8; 12];
     shape.extend(u32::MAX.to_le_bytes());
-    let save = weft_abi::component_flags::SAVE;
+    let save = loom_abi::component_flags::SAVE;
     for (name, size, flags, default) in [(HEALTH, 8, own, vec![0; 8]), (BURNING, 1, shown, vec![0]), (WORN, 0, shown, Vec::new()), (SHAPE, 16, own, shape), (SIMULATED, 8, save, vec![0; 8])] {
         components.push(RawComponent { owner: ENGINE, def: ComponentDef { name: name.into(), size, flags, default, runtime: true }, schema: String::new() });
     }
@@ -1342,22 +1342,22 @@ pub fn freeze(
     g.screen_parts.sort_by_key(|p| (p.order, order(p.owner)));
     g.player_layout = match player_inventory {
         Some((_, groups)) => {
-            if !groups.iter().any(|g| g.3 & weft_abi::slot_flags::HOTBAR != 0) {
+            if !groups.iter().any(|g| g.3 & loom_abi::slot_flags::HOTBAR != 0) {
                 errors.push("player inventory: no group is the hotbar (`.hotbar()`)".into());
             }
             PlayerLayout::new(&groups, equipment)
         }
-        None => PlayerLayout { ..PlayerLayout::new(&[("hotbar".into(), 9, 1, weft_abi::slot_flags::HOTBAR), ("main".into(), 9, 3, 0)], equipment) },
+        None => PlayerLayout { ..PlayerLayout::new(&[("hotbar".into(), 9, 1, loom_abi::slot_flags::HOTBAR), ("main".into(), 9, 3, 0)], equipment) },
     };
     // Menus showing the player's equipment get a group per slot, taking what is worn there.
     let layout = g.player_layout.clone();
     for m in &mut g.menus {
-        let Some(at) = m.groups.iter().position(|g| g.owner == weft_abi::slot_owner::PLAYER_EQUIPMENT) else { continue };
+        let Some(at) = m.groups.iter().position(|g| g.owner == loom_abi::slot_owner::PLAYER_EQUIPMENT) else { continue };
         m.groups.remove(at);
         for (i, e) in layout.equipment.iter().enumerate().rev() {
             m.groups.insert(at, GroupDef {
                 name: e.name.clone(),
-                owner: weft_abi::slot_owner::PLAYER,
+                owner: loom_abi::slot_owner::PLAYER,
                 start: layout.worn.start + i as u32,
                 cols: 1,
                 rows: 1,
@@ -1482,7 +1482,7 @@ pub fn freeze(
             }
         }
         let values = r.values.iter().filter_map(|v| c.id(&v.name).map(|id| (id, v.bytes.clone()))).collect();
-        let hidden = r.flags & weft_abi::recipe_flags::HIDDEN != 0;
+        let hidden = r.flags & loom_abi::recipe_flags::HIDDEN != 0;
         g.recipes.entry(r.kind).or_default().push(Recipe { shaped, inputs, input_counts, outputs, time: r.time, values, hidden });
     }
     g
@@ -1560,7 +1560,7 @@ impl Game {
 
     /// For each input of `r`, the stack in `stacks` that holds enough of it (each stack used
     /// once); `None` if one is missing. Fluids are not in stacks and never match.
-    pub fn find_inputs(&self, r: &Recipe, stacks: &[weft_abi::ItemStack], tags: &Components) -> Option<Vec<usize>> {
+    pub fn find_inputs(&self, r: &Recipe, stacks: &[loom_abi::ItemStack], tags: &Components) -> Option<Vec<usize>> {
         let mut used = vec![false; stacks.len()];
         let mut out = Vec::with_capacity(r.inputs.len());
         for (ing, &n) in r.inputs.iter().zip(&r.input_counts) {

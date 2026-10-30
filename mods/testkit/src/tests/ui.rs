@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use crate::runner::{R, T};
 
@@ -84,18 +84,18 @@ pub async fn f3(t: T) -> R {
     sides(&t);
     t.until("testmod panel shown", Duration::from_secs(2), |t| t.c().ui_rect("text:fall").is_some()).await?;
     t.laid_out(&["text:fall"]);
-    weft_sdk::settings::DEBUG_GROUPS.set(u32::MAX & !(1 << 5));
+    loom_sdk::settings::DEBUG_GROUPS.set(u32::MAX & !(1 << 5));
     t.until("testmod panel hidden", Duration::from_secs(2), |t| t.c().ui_rect("text:fall").is_none()).await?;
     t.check(t.c().ui_rect("text:XYZ").is_some(), "engine panels stay");
-    weft_sdk::settings::DEBUG_GROUPS.set(u32::MAX);
-    weft_sdk::settings::LANGUAGE.set("ru_ru");
-    weft_sdk::settings::GUI_SCALE.set(3);
+    loom_sdk::settings::DEBUG_GROUPS.set(u32::MAX);
+    loom_sdk::settings::LANGUAGE.set("ru_ru");
+    loom_sdk::settings::GUI_SCALE.set(3);
     t.frames(10).await?;
     t.shot("f3_ru_3").await?;
     t.laid_out(&["text:XYZ", "text:base:overworld", "text:calls", "text:1600x900"]);
     sides(&t);
-    weft_sdk::settings::LANGUAGE.set("en_us");
-    weft_sdk::settings::GUI_SCALE.set(2);
+    loom_sdk::settings::LANGUAGE.set("en_us");
+    loom_sdk::settings::GUI_SCALE.set(2);
     t.debug(false).await
 }
 
@@ -217,10 +217,10 @@ pub async fn chat(t: T) -> R {
     }
     let lines = |t: &T| (0..3).rev().map(|i| t.c().chat_line(i)).collect::<Vec<_>>();
     let en = lines(&t);
-    weft_sdk::settings::LANGUAGE.set("ru_ru");
+    loom_sdk::settings::LANGUAGE.set("ru_ru");
     t.frames(3).await?;
     let ru = lines(&t);
-    weft_sdk::settings::LANGUAGE.set("en_us");
+    loom_sdk::settings::LANGUAGE.set("en_us");
     for (i, (line, want_en, want_ru)) in replies.into_iter().enumerate() {
         t.check(en[i].contains(want_en), format!("{line} in English: '{}'", en[i]));
         t.check(ru[i].contains(want_ru), format!("{line} in Russian: '{}'", ru[i]));

@@ -91,7 +91,7 @@ shared! {
 /// Terrain on the GPU (`terrain.wgsl`, `client::terrain_gpu`): the layout of the description,
 /// the noise seeds, record sizes and what comes back, for both sides.
 pub mod terrain {
-    use weft_noise::fixed::salt;
+    use loom_noise::fixed::salt;
 
     shared! {
         /// Header words of the description (`terrain_gpu::describe`).
@@ -140,22 +140,22 @@ pub mod terrain {
         }
         /// Mask step kinds.
         mask {
-            NOISE = weft_abi::terrain_mask::NOISE,
-            CONTINENT = weft_abi::terrain_mask::CONTINENT,
-            TEMPERATURE = weft_abi::terrain_mask::TEMPERATURE,
-            HUMIDITY = weft_abi::terrain_mask::HUMIDITY,
-            ALL = weft_abi::terrain_mask::ALL,
-            NOT = weft_abi::terrain_mask::NOT,
+            NOISE = loom_abi::terrain_mask::NOISE,
+            CONTINENT = loom_abi::terrain_mask::CONTINENT,
+            TEMPERATURE = loom_abi::terrain_mask::TEMPERATURE,
+            HUMIDITY = loom_abi::terrain_mask::HUMIDITY,
+            ALL = loom_abi::terrain_mask::ALL,
+            NOT = loom_abi::terrain_mask::NOT,
         }
         /// Feature presets.
         preset {
-            CONTINENTS = weft_abi::terrain_preset::CONTINENTS,
-            HILLS = weft_abi::terrain_preset::HILLS,
-            MOUNTAINS = weft_abi::terrain_preset::MOUNTAINS,
-            PLATEAUS = weft_abi::terrain_preset::PLATEAUS,
-            CANYONS = weft_abi::terrain_preset::CANYONS,
-            DUNES = weft_abi::terrain_preset::DUNES,
-            CRATERS = weft_abi::terrain_preset::CRATERS,
+            CONTINENTS = loom_abi::terrain_preset::CONTINENTS,
+            HILLS = loom_abi::terrain_preset::HILLS,
+            MOUNTAINS = loom_abi::terrain_preset::MOUNTAINS,
+            PLATEAUS = loom_abi::terrain_preset::PLATEAUS,
+            CANYONS = loom_abi::terrain_preset::CANYONS,
+            DUNES = loom_abi::terrain_preset::DUNES,
+            CRATERS = loom_abi::terrain_preset::CRATERS,
         }
     }
 
@@ -183,7 +183,7 @@ pub mod terrain {
     pub fn prelude() -> String {
         let mut s = wgsl();
         s.push_str(&format!("const ONE: i32 = {};
-", weft_noise::fixed::ONE));
+", loom_noise::fixed::ONE));
         for (i, (name, _)) in SEEDS.iter().enumerate() {
             s.push_str(&format!("const S_{name}: u32 = {i}u;
 "));
@@ -320,8 +320,8 @@ fn records() -> String {
 
 /// A host-visible buffer per frame in flight (`slots`), holding at least `needed` elements of
 /// `stride` bytes; a slot too small is replaced by one grown to the next power of two.
-pub fn frame_buffer(gpu: &mut dyn weft_render::Backend, slots: &mut Vec<(weft_render::BufferId, u32)>, slot: usize, needed: u32, stride: u64, usage: u32, label: &str) -> weft_render::BufferId {
-    use weft_render::usage::HOST;
+pub fn frame_buffer(gpu: &mut dyn loom_render::Backend, slots: &mut Vec<(loom_render::BufferId, u32)>, slot: usize, needed: u32, stride: u64, usage: u32, label: &str) -> loom_render::BufferId {
+    use loom_render::usage::HOST;
     while slots.len() < gpu.frames_in_flight() {
         slots.push((gpu.create_buffer(stride * 1024, usage | HOST, label), 1024));
     }

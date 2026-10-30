@@ -10,14 +10,14 @@
 //!
 //! Build: `cargo build --release`. Then make `run/mods/<your id>/` with the library from
 //! `target/release/` and the `assets` folder next to it.
-//! To share it, run `weft --pack-mod run/mods/<your id>`,
+//! To share it, run `loom --pack-mod run/mods/<your id>`,
 //! it packs that folder (library included) into a zip.
 //!
 //! This example adds one item, a setting, and a gift for joined players.
 //! Everything else is commented examples. The full cheat sheet is at `docs/modding.md`.
 //! `mods/base` and `mods/testmod` use exactly this API, so for more examples check those.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 declare_mod!(deps: ["base"], init: init);
 

@@ -8,7 +8,7 @@ use std::cell::RefCell;
 
 use rayon::prelude::*;
 use rustc_hash::FxHashMap;
-use weft_render::*;
+use loom_render::*;
 
 use crate::assets::{self, Anim, Assets, LoadedTexture};
 use crate::content::Content;
@@ -321,7 +321,7 @@ impl GameTextures {
 
 /// A composite changes when any of its parts does.
 fn composite_stamp(assets: &Assets, entries: &[Entry], parts: [u32; 4]) -> u64 {
-    parts.iter().fold(weft_noise::FNV, |h, &p| weft_noise::fnv_step(h, assets::texture_stamp(assets, &entries[p as usize].name)))
+    parts.iter().fold(loom_noise::FNV, |h, &p| loom_noise::fnv_step(h, assets::texture_stamp(assets, &entries[p as usize].name)))
 }
 
 fn set_glow(map: &mut Vec<u32>, color: u32, glow: u32) {

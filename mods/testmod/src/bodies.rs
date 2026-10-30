@@ -3,7 +3,7 @@
 //! planks that blocks can be added to and broken off on the way, and a crate that falls and can
 //! be stood on.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 static LIFT: Entity = Entity::named("lift");
 static SKIFF: Entity = Entity::named("skiff");

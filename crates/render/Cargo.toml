@@ -1,11 +1,11 @@
 [package]
-name = "weft_render"
+name = "loom_render"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
 naga.workspace = true
-weft_noise.workspace = true
+loom_noise.workspace = true
 raw-window-handle.workspace = true
 bytemuck.workspace = true

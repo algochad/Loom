@@ -2,7 +2,7 @@
 //! side by side, so a listed command always has one.
 
 use glam::{DVec3, IVec3};
-use weft_abi::{ItemStack, damage};
+use loom_abi::{ItemStack, damage};
 
 use super::Server;
 use crate::commands::Args;
@@ -274,7 +274,7 @@ fn regions(s: &mut Server, x: &Ctx) -> Vec<Msg> {
 /// The world's settings (`config_scope::WORLD`), like vanilla's game rules.
 fn rule(_s: &mut Server, x: &Ctx) -> Vec<Msg> {
     let (c, a) = (x.c, x.a);
-    let rules: Vec<(u32, &crate::config::ConfigDef)> = c.game.configs.iter().enumerate().filter(|(_, d)| d.scope == weft_abi::config_scope::WORLD).map(|(i, d)| (i as u32, d)).collect();
+    let rules: Vec<(u32, &crate::config::ConfigDef)> = c.game.configs.iter().enumerate().filter(|(_, d)| d.scope == loom_abi::config_scope::WORLD).map(|(i, d)| (i as u32, d)).collect();
     let value = |id: u32, d: &crate::config::ConfigDef| say("rule.value", vec![text(&d.name), text(&d.show(crate::config::get(id)))]);
     let Some(name) = a.text("name") else {
         return rules.iter().flat_map(|&(id, d)| value(id, d)).collect();

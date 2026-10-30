@@ -19,7 +19,7 @@ crate-type = ["cdylib"]
 # Must be the SDK of the same engine build your players run: a mod built against different build refuses to load.
 # In your own repository point it at a copy of `crates/sdk` with `crates/abi`, or at the game's git repository.
 # Here the SDK sits two folders up
-weft_sdk = { path = "../../crates/sdk" }
+loom_sdk = { path = "../../crates/sdk" }
 # Anything else you need is yours to add linked into your library.
 
 # Makes this folder its own cargo root so it is not part of the game's build. Needed only

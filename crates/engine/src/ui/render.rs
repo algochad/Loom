@@ -3,7 +3,7 @@
 
 use crate::gpu_layout::ui_mode;
 use rustc_hash::FxHashMap;
-use weft_render::*;
+use loom_render::*;
 
 use std::sync::Arc;
 
@@ -138,7 +138,7 @@ pub struct UiRenderer {
     icon_clips: Vec<[f32; 4]>,
     /// Stack counts drawn over queued item icons: (icon number, count, text pixel size).
     /// Item nodes of the tree being built: where, what, and their clip.
-    stacks: Vec<(Rect, weft_abi::ItemStack, [f32; 4])>,
+    stacks: Vec<(Rect, loom_abi::ItemStack, [f32; 4])>,
     /// Text effects and GUI fills the shader has, and the effect slot by `text::fx_id`.
     fx: Slots,
     gui: Slots,
@@ -468,7 +468,7 @@ impl UiRenderer {
                 let w = size.min(r.x + r.w - x);
                 let (fw, fh) = (w / size, h / size);
                 if turn {
-                    let k = weft_noise::hash(0x7117, i, j, 0) as u32 & 7;
+                    let k = loom_noise::hash(0x7117, i, j, 0) as u32 & 7;
                     // Where a texture point lands in the tile (0..1 each way), and back.
                     let to_tile = |t: [f32; 2]| {
                         let t = if k & 4 != 0 { [1.0 - t[0], t[1]] } else { t };
@@ -715,7 +715,7 @@ impl UiRenderer {
 
     /// A stack the one way slots, the hotbar, item nodes and the held cursor stack show it: the
     /// icon centered in `r`, the durability bar, the count at the bottom right.
-    pub fn stack_icon(&mut self, c: &Content, textures: &GameTextures, r: Rect, stack: weft_abi::ItemStack, scale: f32, text_unit: f32) {
+    pub fn stack_icon(&mut self, c: &Content, textures: &GameTextures, r: Rect, stack: loom_abi::ItemStack, scale: f32, text_unit: f32) {
         if stack.is_empty() {
             return;
         }
@@ -842,7 +842,7 @@ impl UiRenderer {
             Kind::Item { last, .. } => {
                 if last.0 != 0 {
                     let clip = n.clip.map_or([0.0; 4], |c| [c.x * scale, c.y * scale, (c.x + c.w) * scale, (c.y + c.h) * scale]);
-                    self.stacks.push((r, weft_abi::ItemStack::new(last.0, last.1.max(1)), clip));
+                    self.stacks.push((r, loom_abi::ItemStack::new(last.0, last.1.max(1)), clip));
                 }
             }
             Kind::Progress { class, value, dir, .. } => {
@@ -850,9 +850,9 @@ impl UiRenderer {
                 let fill = look.texture(class, "fill").and_then(|n| self.texture(gpu, assets, &n));
                 let v = value.clamp(0.0, 1.0);
                 let (fr, uv) = match *dir {
-                    weft_abi::ui_dir::UP => (Rect { y: r.y + r.h * (1.0 - v), h: r.h * v, ..r }, [0.0, 1.0 - v, 1.0, 1.0]),
-                    weft_abi::ui_dir::LEFT => (Rect { x: r.x + r.w * (1.0 - v), w: r.w * v, ..r }, [1.0 - v, 0.0, 1.0, 1.0]),
-                    weft_abi::ui_dir::DOWN => (Rect { h: r.h * v, ..r }, [0.0, 0.0, 1.0, v]),
+                    loom_abi::ui_dir::UP => (Rect { y: r.y + r.h * (1.0 - v), h: r.h * v, ..r }, [0.0, 1.0 - v, 1.0, 1.0]),
+                    loom_abi::ui_dir::LEFT => (Rect { x: r.x + r.w * (1.0 - v), w: r.w * v, ..r }, [1.0 - v, 0.0, 1.0, 1.0]),
+                    loom_abi::ui_dir::DOWN => (Rect { h: r.h * v, ..r }, [0.0, 0.0, 1.0, v]),
                     _ => (Rect { w: r.w * v, ..r }, [0.0, 0.0, v, 1.0]),
                 };
                 match fill {

@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 use glam::{DVec3, IVec3, Vec2};
 use parking_lot::Mutex;
 use rustc_hash::FxHashMap;
-use weft_abi::{self as abi, ItemStack, Slice, Str, client_flags as cf};
+use loom_abi::{self as abi, ItemStack, Slice, Str, client_flags as cf};
 
 use super::{Request, Running};
 use crate::client::Client;

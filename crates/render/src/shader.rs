@@ -66,7 +66,7 @@ impl Shader {
         }
         buffers.sort_by_key(|b| b.0);
 
-        Ok(Shader { module, info, hash: weft_noise::fnv(full.as_bytes()), push_constant_size, buffers })
+        Ok(Shader { module, info, hash: loom_noise::fnv(full.as_bytes()), push_constant_size, buffers })
     }
 }
 

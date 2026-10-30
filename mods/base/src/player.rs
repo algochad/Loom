@@ -1,7 +1,7 @@
 //! Survival rules on top of the engine's player: hunger, regeneration, drowning, armor, eating,
 //! the HUD and the inventory screen with its 2x2 crafting grid.
 
-use weft_sdk::*;
+use loom_sdk::*;
 
 use crate::items::{ARMOR, FOOD};
 

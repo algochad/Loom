@@ -17,8 +17,8 @@ use std::time::Instant;
 
 use glam::{DVec3, IVec3, Vec3};
 use rustc_hash::{FxHashMap, FxHashSet};
-use weft_abi::{ItemStack, block_flags as bf};
-use weft_render::{Backend, BufferId, CommandList, FrameInfo};
+use loom_abi::{ItemStack, block_flags as bf};
+use loom_render::{Backend, BufferId, CommandList, FrameInfo};
 use crate::gpu_layout::Scene;
 
 use crate::content::content;
@@ -134,8 +134,8 @@ fn words(bytes: &[u8]) -> impl Iterator<Item = [u8; 4]> + '_ {
 
 impl ClientEntity {
     /// What its kind's client tick gets (`client` filled in by the caller).
-    pub fn args(&self, id: u64, dt: f32) -> weft_abi::ClientEntityArgs {
-        weft_abi::ClientEntityArgs { client: std::ptr::null_mut(), entity: id, kind: self.kind, pos: self.pos.to_array(), yaw: self.yaw, walked: self.walk, dying: self.dying.unwrap_or(-1.0), age: self.age, dt }
+    pub fn args(&self, id: u64, dt: f32) -> loom_abi::ClientEntityArgs {
+        loom_abi::ClientEntityArgs { client: std::ptr::null_mut(), entity: id, kind: self.kind, pos: self.pos.to_array(), yaw: self.yaw, walked: self.walk, dying: self.dying.unwrap_or(-1.0), age: self.age, dt }
     }
 
     /// Half width, height and eye height of its box, like the server's `Entity::dims`.
@@ -316,7 +316,7 @@ pub struct Client {
     pub sounds: Vec<crate::audio::Play>,
     /// Own walk distance at which the next step sounds.
     next_step: f32,
-    rng: weft_noise::Rng,
+    rng: loom_noise::Rng,
     pub dead: bool,
     pub components: FxHashMap<u32, Vec<u8>>,
     pub menu: Option<ClientMenu>,
@@ -477,7 +477,7 @@ impl Client {
             hit_sound: 0.0,
             sounds: Vec::new(),
             next_step: 0.0,
-            rng: weft_noise::Rng(0x9E37_79B9_7F4A_7C15),
+            rng: loom_noise::Rng(0x9E37_79B9_7F4A_7C15),
             drag: None,
             sweep: Vec::new(),
             last_click: None,
@@ -611,7 +611,7 @@ impl Client {
                         Some(o) if (sample - o).abs() < 0.25 => self.offset_target += (sample - self.offset_target) * 0.1,
                         _ => (self.tick_offset, self.offset_target) = (Some(sample), sample),
                     }
-                    let solid = |k: u32| content().game.entities[k as usize].is(weft_abi::entity_flags::SOLID);
+                    let solid = |k: u32| content().game.entities[k as usize].is(loom_abi::entity_flags::SOLID);
                     for &(id, pos, yaw, pitch, crouched, frame) in &list {
                         if let Some(e) = self.entities.get_mut(&id) {
                             e.crouched = crouched;
@@ -990,7 +990,7 @@ impl Client {
                 let mut push = DVec3::ZERO;
                 for (&id, e) in &self.entities {
                     let k = &c.game.entities[e.kind as usize];
-                    if k.is(weft_abi::entity_flags::SOLID) {
+                    if k.is(loom_abi::entity_flags::SOLID) {
                         let (now, delta) = (e.pose(at), e.pose(at) - e.pose(at - 1.0));
                         let aabb = physics::Aabb::around(now, k.width as f64 / 2.0, k.height as f64);
                         let built = e.structure.as_deref();
@@ -1004,7 +1004,7 @@ impl Client {
                         };
                         let blocks = built.map(|s| (s as &dyn physics::Blocks, crate::server::structure_origin(now)));
                         bodies.push(physics::Body { id, aabb, delta, carry: k.carry_height as f64, crushes: false, blocks });
-                    } else if k.is(weft_abi::entity_flags::PUSHABLE) && e.item.is_empty() && e.dying.is_none() {
+                    } else if k.is(loom_abi::entity_flags::PUSHABLE) && e.item.is_empty() && e.dying.is_none() {
                         let d = self.player.pos - e.pos;
                         let ((ehw, eh, _), (hw, h, _)) = (e.dims(), self.player.dims());
                         let reach = ehw + hw;
@@ -1185,12 +1185,12 @@ impl Client {
         let mut frames = std::mem::take(&mut self.frames);
         frames.clear();
         let at = self.body_tick(shown);
-        frames.extend(self.entities.iter().filter(|(_, e)| c.game.entities[e.kind as usize].is(weft_abi::entity_flags::SOLID)).map(|(&id, e)| (id, e.pose(at))));
+        frames.extend(self.entities.iter().filter(|(_, e)| c.game.entities[e.kind as usize].is(loom_abi::entity_flags::SOLID)).map(|(&id, e)| (id, e.pose(at))));
         for e in self.entities.values_mut().filter(|e| e.pulled.is_none()) {
             let before = e.pos;
             let body = e.rel_target.and_then(|t| frames.iter().find(|f| f.0 == e.frame).map(|f| (f.1, t)));
             let mut walked = None;
-            e.pos = if c.game.entities[e.kind as usize].is(weft_abi::entity_flags::SOLID) {
+            e.pos = if c.game.entities[e.kind as usize].is(loom_abi::entity_flags::SOLID) {
                 e.pose(at)
             } else if let Some((at, rel_target)) = body {
                 let rel_before = e.rel;
@@ -1221,12 +1221,12 @@ impl Client {
         if let (Some((frame, pos, _)), Some(hit)) = (self.breaking, self.target) {
             if self.hit_dust <= 0.0 && (hit.frame, hit.block) == (frame, pos) {
                 self.hit_dust = 0.05;
-                if let Some(&kind) = c.game.particle_names.get(weft_abi::particle::BLOCK) {
+                if let Some(&kind) = c.game.particle_names.get(loom_abi::particle::BLOCK) {
                     let normal = crate::world::DIRS[hit.face as usize].as_vec3();
                     let at = pos.as_dvec3() + self.frame_origin(frame) + DVec3::splat(0.5) + (normal * 0.55).as_dvec3();
                     let spread = (glam::Vec3::splat(0.45) * (glam::Vec3::ONE - normal.abs())).to_array();
                     let velocity = (normal * 0.6).to_array();
-                    self.particles.spawn(&weft_abi::ParticleBurst { kind, pos: at.to_array(), spread, velocity, speed: 0.4, count: 1, block: hit.state, ..weft_abi::ParticleBurst::DEFAULT });
+                    self.particles.spawn(&loom_abi::ParticleBurst { kind, pos: at.to_array(), spread, velocity, speed: 0.4, count: 1, block: hit.state, ..loom_abi::ParticleBurst::DEFAULT });
                 }
             }
         }
@@ -1307,7 +1307,7 @@ impl Client {
         const TRIES: usize = 667;
         let c = content();
         let kinds = self.ambient_kinds.get_or_insert_with(|| {
-            let comp = c.components.id(weft_abi::comp::AMBIENT_PARTICLE);
+            let comp = c.components.id(loom_abi::comp::AMBIENT_PARTICLE);
             (0..c.states.len() as u32)
                 .map(|s| comp.and_then(|id| c.components.text(crate::components::BLOCK, s, id)).and_then(|name| c.game.particle_names.get(name).copied()).unwrap_or(u32::MAX))
                 .collect()
@@ -1322,7 +1322,7 @@ impl Client {
             let kind = kinds.get(self.world.block(p) as usize).copied().unwrap_or(u32::MAX);
             if kind != u32::MAX {
                 let pos = [p.x as f64 + 0.5, p.y as f64 + 0.9, p.z as f64 + 0.5];
-                self.particles.spawn(&weft_abi::ParticleBurst { kind, pos, spread: [0.3, 0.2, 0.3], speed: 0.3, count: 1, ..weft_abi::ParticleBurst::DEFAULT });
+                self.particles.spawn(&loom_abi::ParticleBurst { kind, pos, spread: [0.3, 0.2, 0.3], speed: 0.3, count: 1, ..loom_abi::ParticleBurst::DEFAULT });
             }
         }
     }
@@ -1330,16 +1330,16 @@ impl Client {
     /// The engine's cosmetics of one entity, its kind's client tick unless a mod gave it one:
     /// steps by distance walked, idle noises about every twelve seconds (vanilla's ambient
     /// timer), and a puff of smoke when its death animation ends (vanilla's 20 poof particles).
-    pub fn entity_effects(&mut self, a: &weft_abi::ClientEntityArgs) {
+    pub fn entity_effects(&mut self, a: &loom_abi::ClientEntityArgs) {
         use crate::audio::Play;
         let c = content();
         let k = &c.game.entities[a.kind as usize];
         let pos = DVec3::from_array(a.pos);
         if a.dying >= 1.0 {
-            if let Some(&kind) = c.game.particle_names.get(weft_abi::particle::POOF) {
+            if let Some(&kind) = c.game.particle_names.get(loom_abi::particle::POOF) {
                 let (w, h) = (k.width * 0.5, k.height * 0.5);
                 let at = (pos + DVec3::Y * h as f64).to_array();
-                self.particles.spawn(&weft_abi::ParticleBurst { kind, pos: at, spread: [w, h, w], velocity: [0.0, 0.4, 0.0], speed: 0.8, count: 20, ..weft_abi::ParticleBurst::DEFAULT });
+                self.particles.spawn(&loom_abi::ParticleBurst { kind, pos: at, spread: [w, h, w], velocity: [0.0, 0.4, 0.0], speed: 0.8, count: 20, ..loom_abi::ParticleBurst::DEFAULT });
             }
             return;
         }
@@ -1651,7 +1651,7 @@ impl Client {
         let cam = self.render_camera();
         let scene = self.scene(&cam, frame);
         while self.scene_bufs.len() < gpu.frames_in_flight() {
-            self.scene_bufs.push(gpu.create_buffer(size_of::<Scene>() as u64, weft_render::usage::STORAGE | weft_render::usage::HOST, "scene"));
+            self.scene_bufs.push(gpu.create_buffer(size_of::<Scene>() as u64, loom_render::usage::STORAGE | loom_render::usage::HOST, "scene"));
         }
         let scene_buf = self.scene_bufs[frame.slot];
         gpu.mapped(scene_buf)[..size_of::<Scene>()].copy_from_slice(bytemuck::bytes_of(&scene));
@@ -1659,7 +1659,7 @@ impl Client {
         // translucent blocks, cracks and gizmo fills, blended particles, and the hand.
         let frames: Vec<(u64, DVec3)> = self.entities.iter().filter(|(_, e)| e.structure.is_some()).map(|(&id, e)| (id, crate::server::structure_origin(e.pos))).collect();
         self.render.draw(gpu, list, frame, &cam, scene_buf, &frames);
-        list.push(weft_render::Cmd::Mark);
+        list.push(loom_render::Cmd::Mark);
         let mut late = std::mem::take(&mut self.late);
         late.clear();
         self.render.draw_translucent(&mut late);
@@ -1679,7 +1679,7 @@ impl Client {
         list.append(&mut late);
         list.append(&mut hand_late);
         (self.late, self.hand_late) = (late, hand_late);
-        list.push(weft_render::Cmd::Mark);
+        list.push(loom_render::Cmd::Mark);
     }
 
     pub fn fog_color(&self) -> [f32; 4] {

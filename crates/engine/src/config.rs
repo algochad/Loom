@@ -9,7 +9,7 @@ use std::path::Path;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Mutex, OnceLock, RwLock};
 
-use weft_abi::{config_kind as ck, config_scope as scope};
+use loom_abi::{config_kind as ck, config_scope as scope};
 
 use crate::content::content;
 

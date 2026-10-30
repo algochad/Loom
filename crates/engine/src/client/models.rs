@@ -6,8 +6,8 @@
 
 use glam::Mat4;
 use rayon::prelude::*;
-use weft_abi::comp;
-use weft_render::*;
+use loom_abi::comp;
+use loom_render::*;
 
 use crate::assets::Assets;
 use crate::components::ENTITY;

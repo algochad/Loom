@@ -4,8 +4,8 @@
 
 use glam::{DVec3, IVec3, Vec3};
 use rayon::prelude::*;
-use weft_abi::{ParticleBurst, particle_flags as pf};
-use weft_render::*;
+use loom_abi::{ParticleBurst, particle_flags as pf};
+use loom_render::*;
 
 use super::textures::GameTextures;
 use super::world::ClientWorld;
@@ -47,7 +47,7 @@ struct Particle {
 
 pub struct Particles {
     list: Vec<Particle>,
-    rng: weft_noise::Rng,
+    rng: loom_noise::Rng,
     pipes: Option<[PipelineId; 2]>,
     /// Shader slot of each kind.
     kind_slots: Vec<u32>,
@@ -63,7 +63,7 @@ fn shader(assets: &crate::assets::Assets) -> Result<(Shader, Slots), String> {
 
 impl Particles {
     pub fn new(gpu: &mut dyn Backend, assets: &crate::assets::Assets) -> Particles {
-        let mut p = Particles { list: Vec::new(), rng: weft_noise::Rng(0x9E37_79B9_7F4A_7C15), pipes: None, kind_slots: Vec::new(), instances: Vec::new(), gpu: Vec::new() };
+        let mut p = Particles { list: Vec::new(), rng: loom_noise::Rng(0x9E37_79B9_7F4A_7C15), pipes: None, kind_slots: Vec::new(), instances: Vec::new(), gpu: Vec::new() };
         p.reload(gpu, assets);
         p
     }
@@ -119,7 +119,7 @@ impl Particles {
         }
         // Block dust shows the block's side texture (a box model's first box's).
         let side = |s: &crate::content::StateInfo| match s.boxes.first() {
-            Some(b) if s.model == weft_abi::Model::Boxes => b.textures[1],
+            Some(b) if s.model == loom_abi::Model::Boxes => b.textures[1],
             _ => s.textures[1],
         };
         let layer = if k.frames.is_empty() { c.states.get(b.block as usize).map_or(0, side) } else { 0 };

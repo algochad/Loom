@@ -1,5 +1,5 @@
 //! Proves the engine is moddable without touching the core. Everything here uses only
-//! `weft_sdk` and the base game's API crate `base_api` (types, no game code):
+//! `loom_sdk` and the base game's API crate `base_api` (types, no game code):
 //! - a generator, a cable and an electric furnace talking through the engine's energy contract,
 //! - a block with its own screen (energy bar bound to synced menu data),
 //! - reads the base game's data (fuel values, smelting recipes) through `base_api`, checked when
@@ -15,8 +15,8 @@
 mod bodies;
 mod looks;
 
-use weft_sdk::terrain::*;
-use weft_sdk::*;
+use loom_sdk::terrain::*;
+use loom_sdk::*;
 
 declare_mod!(deps: ["base"], init: init);
 
@@ -281,7 +281,7 @@ fn about_screen(r: &mut Registry) {
             ui.input("", 16, S::col().class("about_name").w(200.0), |_, text| *NAME.lock().unwrap() = text.to_string());
             ui.text_bind(|_, out| out.set("testmod.about.name", &[Arg::Text(&NAME.lock().unwrap())]));
             ui.slider(S::col().w(200.0).h(20.0), |_| VOLUME.load(std::sync::atomic::Ordering::Relaxed) as f32 / 100.0, |_, v| VOLUME.store((v * 100.0).round() as u32, std::sync::atomic::Ordering::Relaxed));
-            ui.text_bind(|_, out| out.set("testmod.about.fov", &[Arg::Float(weft_sdk::settings::FOV.get() as f64, 0)]));
+            ui.text_bind(|_, out| out.set("testmod.about.fov", &[Arg::Float(loom_sdk::settings::FOV.get() as f64, 0)]));
             ui.text_bind_styled(S::col().mono(), |_, out| out.set("testmod.about.volume", &[Arg::Int(VOLUME.load(std::sync::atomic::Ordering::Relaxed) as i64)]));
             ui.row(S::row().gap(4.0), |ui| {
                 ui.item(Item::lookup("base:coal").unwrap_or(0), 3, S::default());
